@@ -3,15 +3,13 @@ import can
 import threading
 import time
 
-
-
 # Constants for limits
-P_MIN = -95.5
-P_MAX = 95.5
-V_MIN = -30.0
-V_MAX = 30.0
-T_MIN = -18.0
-T_MAX = 18.0
+P_MIN = -12.5
+P_MAX = 12.5
+V_MIN = -50.0
+V_MAX = 50.0
+T_MIN = -65.0
+T_MAX = 65.0
 Kp_MIN = 0
 Kp_MAX = 500.0
 Kd_MIN = 0
@@ -36,7 +34,9 @@ def float_to_uint(x, x_min, x_max, bits):
     """Converts a float to an unsigned int given the range and number of bits."""
     span = x_max - x_min
     x = max(min(x, x_max), x_min)
-    return int((x - x_min) * ((1 << bits) / span))
+    result = int((x - x_min) * ((1 << bits) / span))
+
+    return result
 
 def pack_cmd(p_des, v_des, kp, kd, t_ff):
     """Pack command into a CAN message."""
@@ -98,6 +98,9 @@ def receive_can_messages(bus):
                 # continue
                 print(f"ID: {msg.arbitration_id}, {hex(msg.arbitration_id)} {bin(msg.arbitration_id)}")
                 print(f"Full CAN message received: ID: {msg.arbitration_id}, Data: {[hex(byte) for byte in msg.data]}")
+                id, position, speed, torque, temperature = unpack_reply(msg)
+                print(f"Parsed CAN message - ID: {id}, Position: {position:.2f}, Speed: {speed:.2f}, Torque: {torque:.2f}, Temperature: {temperature:.2f}")
+                time.sleep(1)  # Slow down message reception if necessary
 
 def enter_motor_control_mode(bus):
     """Send command to enter motor control mode."""
