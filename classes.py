@@ -99,18 +99,18 @@ class Exoskeleton:
             if self.currentMode == "Mode 1":
                 # For example, if button1 is pressed, extend the knee
                 if self.userInterface.button1:
-                    self.kneeMotor.extend(100, 0, self.userInterface.dialState, 5)
+                    self.kneeMotor.extend(100, 0, self.userInterface.dialState, 5) #Should extend the knee, wait until the knee is extended, and then retract the knee. Repeat until button not pressed
                 if self.userInterface.button2:
-                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5)
+                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5) #Should extend the ankle, wait until the ankle is extended, and then retract the knee. Repeat until button not pressed
 
             elif self.currentMode == "Mode 2":
                 # Torque-based adjustments
-                self.kneeMotor.assist(self.userInterface.dialState)
+                self.kneeMotor.assist(self.userInterface.dialState) #Need to add if statements here for buttons 1 and 2
                 self.ankleMotor.assist(self.userInterface.dialState)
 
             elif self.currentMode == "Mode 3":
                 # Resistance-based adjustments
-                self.kneeMotor.resist(self.userInterface.dialState)
+                self.kneeMotor.resist(self.userInterface.dialState) #Need to add if statements here for buttons 1 and 2
                 self.ankleMotor.resist(self.userInterface.dialState)
 
             # Wait before rechecking to prevent excessive CPU usage
@@ -132,7 +132,7 @@ def start_exoskeleton():
         if command == "mode":
             exo.userInterface.press_mode_button()
         elif command == "button1":
-            exo.userInterface.press_button1()
+            exo.userInterface.press_button1() #In mode 1, extend knee function is being called twice per button press. It should only be called once. Probably a timing issue
             time.sleep(0.2)
             exo.userInterface.release_button1()
         elif command == "button2":
@@ -140,7 +140,7 @@ def start_exoskeleton():
             time.sleep(0.2)
             exo.userInterface.release_button2()
         elif command.startswith("dial"):
-            _, value = command.split()
+            _, value = command.split() #this throws an error if dial is inputted without a number, add exception handling for this case
             exo.userInterface.set_dial_state(int(value))
         elif command == "quit":
             print("Exiting...")
