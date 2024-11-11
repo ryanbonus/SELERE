@@ -18,6 +18,8 @@ class KneeMotor:
         self.acceleration = acceleration
         print("Extending Knee: Range [{}-{}], Speed {}, Acceleration {}".format(
             rangeOfMotionBottom, rangeOfMotionTop, speed, acceleration))
+        # Simulate extension time
+        time.sleep(1)
 
     def retract(self, rangeOfMotionTop, rangeOfMotionBottom, speed, acceleration):
         self.rangeOfMotionTop = rangeOfMotionTop
@@ -26,6 +28,8 @@ class KneeMotor:
         self.acceleration = acceleration
         print("Retracting Knee: Range [{}-{}], Speed {}, Acceleration {}".format(
             rangeOfMotionBottom, rangeOfMotionTop, speed, acceleration))
+        # Simulate retraction time
+        time.sleep(1)
 
     def assist(self, torque):
         self.torque = torque
@@ -97,21 +101,29 @@ class Exoskeleton:
 
             # Mode-specific behaviors
             if self.currentMode == "Mode 1":
-                # For example, if button1 is pressed, extend the knee
+                # Extend and retract knee while button1 is pressed
                 if self.userInterface.button1:
-                    self.kneeMotor.extend(100, 0, self.userInterface.dialState, 5) #Should extend the knee, wait until the knee is extended, and then retract the knee. Repeat until button not pressed
+                    self.kneeMotor.extend(100, 0, self.userInterface.dialState, 5)
+                    self.kneeMotor.retract(100, 0, self.userInterface.dialState, 5)
+
+                # Extend and retract ankle while button2 is pressed
                 if self.userInterface.button2:
-                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5) #Should extend the ankle, wait until the ankle is extended, and then retract the knee. Repeat until button not pressed
+                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5)
+                    self.ankleMotor.retract(100, 0, self.userInterface.dialState, 5)
 
             elif self.currentMode == "Mode 2":
-                # Torque-based adjustments
-                self.kneeMotor.assist(self.userInterface.dialState) #Need to add if statements here for buttons 1 and 2
-                self.ankleMotor.assist(self.userInterface.dialState)
+                # Apply assistive torque if button1 or button2 is pressed
+                if self.userInterface.button1:
+                    self.kneeMotor.assist(self.userInterface.dialState)
+                if self.userInterface.button2:
+                    self.ankleMotor.assist(self.userInterface.dialState)
 
             elif self.currentMode == "Mode 3":
-                # Resistance-based adjustments
-                self.kneeMotor.resist(self.userInterface.dialState) #Need to add if statements here for buttons 1 and 2
-                self.ankleMotor.resist(self.userInterface.dialState)
+                # Apply resistive torque if button1 or button2 is pressed
+                if self.userInterface.button1:
+                    self.kneeMotor.resist(self.userInterface.dialState)
+                if self.userInterface.button2:
+                    self.ankleMotor.resist(self.userInterface.dialState)
 
             # Wait before rechecking to prevent excessive CPU usage
             time.sleep(0.1)
@@ -132,7 +144,7 @@ def start_exoskeleton():
         if command == "mode":
             exo.userInterface.press_mode_button()
         elif command == "button1":
-            exo.userInterface.press_button1() #In mode 1, extend knee function is being called twice per button press. It should only be called once. Probably a timing issue
+            exo.userInterface.press_button1()
             time.sleep(0.2)
             exo.userInterface.release_button1()
         elif command == "button2":
@@ -140,8 +152,11 @@ def start_exoskeleton():
             time.sleep(0.2)
             exo.userInterface.release_button2()
         elif command.startswith("dial"):
-            _, value = command.split() #this throws an error if dial is inputted without a number, add exception handling for this case
-            exo.userInterface.set_dial_state(int(value))
+            try:
+                _, value = command.split()
+                exo.userInterface.set_dial_state(int(value))
+            except ValueError:
+                print("Invalid dial input. Please enter 'dial' followed by a number.")
         elif command == "quit":
             print("Exiting...")
             break
