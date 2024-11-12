@@ -104,11 +104,11 @@ class Exoskeleton:
                 # Extend and retract knee while button1 is pressed
                 if self.userInterface.button1:
                     self.kneeMotor.extend(100, 0, self.userInterface.dialState, 5)
-                    self.kneeMotor.retract(100, 0, self.userInterface.dialState, 5)
+                    self.kneeMotor.retract(100, 0, self.userInterface.dialState, 5) #this needs to happen before the menu pops back up, not after. This is important so that only one command is being handled by the motor at once
 
                 # Extend and retract ankle while button2 is pressed
                 if self.userInterface.button2:
-                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5)
+                    self.ankleMotor.extend(100, 0, self.userInterface.dialState, 5) #this needs to happen before the menu pops back up, not after. This is important so that only one command is being handled by the motor at once
                     self.ankleMotor.retract(100, 0, self.userInterface.dialState, 5)
 
             elif self.currentMode == "Mode 2":
@@ -139,7 +139,7 @@ def start_exoskeleton():
 
     # Simulate user inputs in the command line
     while True:
-        command = input("Enter command (mode, button1, button2, dial, quit): ").strip().lower()
+        command = input("Enter command (mode, button1, button2, dial, quit): ").strip().lower() #'dial' needs to be switched to the identifier 'button3', and the logic needs to change to be similar to how the mode button works
 
         if command == "mode":
             exo.userInterface.press_mode_button()
