@@ -68,10 +68,67 @@ def canHandlerThread(bus):
         if msg:
             writeLog(msg)
 
-def send_can_message(bus, command):
-    """Takes in a byteArray of size 8, and sends it to the motor as a can message"""
-    formattedCommand = can.message(arbitration_ID=0x01, data=command, is_extended_id=False)
-    bus.send(command)
+
+def comm_can_transmit_eid(bus, eid, data):
+    # Ensure data length is within CAN limits
+    if len(data) > 8:
+        data = data[:8]
+    
+    # Create a CAN message
+    message = can.Message(
+        arbitration_id=eid,  # Extended ID
+        is_extended_id=True, # Use extended ID
+        data=data            # Data payload
+    )
+    
+    # Send the message
+    try:
+        bus.send(message)
+        print("Message sent on CAN bus")
+    except can.CanError as e:
+        print(f"Error sending message: {e}")
+
+def buffer_append(nBytes, bufferObject, number, startingPos):
+    firstshift = (nBytes-1)*8
+    for i in range(0,nBytes):
+        buffer_append(number >> firstshift-i*8)
+
+def buffer_append_int32(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
+    buffer_append(4,buffer,number,index)
+
+def buffer_append_int16(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
+    buffer_append(2,buffer,number,index)
+
+def position_speed_accelleration(controller_id, pos, spd, RPA):
+    """
+    Sends position, speed, and RPA data to a controller over CAN.
+
+    :param controller_id: ID of the target controller (0-255).
+    :param pos: Position as a float.
+    :param spd: Speed as a 16-bit integer.
+    :param RPA: Ramp or speed parameter as a 16-bit integer.
+    """
+    # Prepare the data buffer
+    buffer = bytearray(8)
+    
+    # Append position (scaled and converted to int32)
+    pos_scaled = int(pos * 10000)
+    struct.pack_into('>i', buffer, 0, pos_scaled)  # Append as big-endian int32
+    
+    # Append speed (scaled and converted to int16)
+    spd_scaled = int(spd / 10.0)
+    struct.pack_into('>h', buffer, 4, spd_scaled)  # Append as big-endian int16
+    
+    # Append RPA (scaled and converted to int16)
+    RPA_scaled = int(RPA / 10.0)
+    struct.pack_into('>h', buffer, 6, RPA_scaled)  # Append as big-endian int16
+    
+    # Construct the CAN message ID
+    CAN_PACKET_SET_POS_SPD = 0x10  # Example constant, replace with actual value
+    message_id = controller_id | (CAN_PACKET_SET_POS_SPD << 8)
+    
+    # Create and send the CAN message
+    msg = can.Message(arbitration_id=message_id, data=buffer, is_extended_id=True)
 
 def startCan():
     try:
