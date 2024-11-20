@@ -3,18 +3,17 @@ import can
 import threading
 import time
 from datetime import datetime
+import numpy as np
+from enum import Enum
 
-# Constants for limits
-P_MIN = -12.5
-P_MAX = 12.5
-V_MIN = -50.0
-V_MAX = 50.0
-T_MIN = -65.0
-T_MAX = 65.0
-Kp_MIN = 0
-Kp_MAX = 500.0
-Kd_MIN = 0
-Kd_MAX = 5.0
+class CAN_PACKET_ID(Enum):
+    CAN_PACKET_SET_DUTY = 0            # Duty Cycle Mode
+    CAN_PACKET_SET_CURRENT = 1         # Current Loop Mode
+    CAN_PACKET_SET_CURRENT_BRAKE = 2   # Current Brake Mode
+    CAN_PACKET_SET_RPM = 3             # Speed Mode
+    CAN_PACKET_SET_POS = 4             # Position Mode
+    CAN_PACKET_SET_ORIGIN_HERE = 5     # Set Origin Mode
+    CAN_PACKET_SET_POS_SPD = 6
 
 def float_to_uint(x, x_min, x_max, bits):
     """Converts a float to an unsigned int given the range and number of bits."""
@@ -99,36 +98,15 @@ def buffer_append_int32(buffer, number, index): #To-do, Delete this function and
 def buffer_append_int16(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
     buffer_append(2,buffer,number,index)
 
-def position_speed_accelleration(controller_id, pos, spd, RPA):
-    """
-    Sends position, speed, and RPA data to a controller over CAN.
-
-    :param controller_id: ID of the target controller (0-255).
-    :param pos: Position as a float.
-    :param spd: Speed as a 16-bit integer.
-    :param RPA: Ramp or speed parameter as a 16-bit integer.
-    """
-    # Prepare the data buffer
+def position_speed_accelleration(controller_id, position, speed, rpa):
+    position_index = 0
+    speed_index = 4
+    rpa_index = 6
     buffer = bytearray(8)
-    
-    # Append position (scaled and converted to int32)
-    pos_scaled = int(pos * 10000)
-    struct.pack_into('>i', buffer, 0, pos_scaled)  # Append as big-endian int32
-    
-    # Append speed (scaled and converted to int16)
-    spd_scaled = int(spd / 10.0)
-    struct.pack_into('>h', buffer, 4, spd_scaled)  # Append as big-endian int16
-    
-    # Append RPA (scaled and converted to int16)
-    RPA_scaled = int(RPA / 10.0)
-    struct.pack_into('>h', buffer, 6, RPA_scaled)  # Append as big-endian int16
-    
-    # Construct the CAN message ID
-    CAN_PACKET_SET_POS_SPD = 0x10  # Example constant, replace with actual value
-    message_id = controller_id | (CAN_PACKET_SET_POS_SPD << 8)
-    
-    # Create and send the CAN message
-    msg = can.Message(arbitration_id=message_id, data=buffer, is_extended_id=True)
+    buffer_append_int32(buffer, np.int32(position*10000), position_index)
+    buffer_append_int16(buffer, speed/10.0, speed_index)
+    buffer_append_int16(buffer, rpa/10.0, rpa_index)
+    comm_can_transmit_eid((controller_id | (np.uint32(CAN_PACKET_ID.CAN_PACKET_SET_POS_SPD) << 8)), buffer)    
 
 def startCan():
     try:
