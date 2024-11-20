@@ -14,7 +14,7 @@ Kp_MIN = 0
 Kp_MAX = 500.0
 Kd_MIN = 0
 Kd_MAX = 5.0
-I_MAX = 30.0  # Example value for current limits
+#I_MAX = 30.0   Example value for current limits, not used currently
 
 mid=0x01
 exid = False
@@ -35,6 +35,8 @@ def float_to_uint(x, x_min, x_max, bits):
     span = x_max - x_min
     x = max(min(x, x_max), x_min)
     result = int((x - x_min) * ((1 << bits) / span))
+    if result != 0:
+        result -= 1 #Added this '-1' to correct the value coming out of this function to what the bytearray is expecting. This helps to prevent errors at the maximum values
 
     return result
 
@@ -48,14 +50,14 @@ def pack_cmd(p_des, v_des, kp, kd, t_ff):
 
     # Pack ints into the CAN message data
     msg_data = bytearray(8)
-    msg_data[0] = p_int >> 8  # Position High 8
-    msg_data[1] = p_int & 0xFF  # Position Low 8
-    msg_data[2] = v_int >> 4  # Speed High 8 bits
-    msg_data[3] = ((v_int & 0xF) << 4) | (kp_int >> 8)  # Speed Low 4 bits, KP High 4 bits
-    msg_data[4] = kp_int & 0xFF  # KP Low 8 bits
-    msg_data[5] = kd_int >> 4  # Kd High 8 bits
-    msg_data[6] = ((kd_int & 0xF) << 4) | (t_int >> 8)  # Kd Low 4 bits, Torque High 4 bits
-    msg_data[7] = t_int & 0xFF  # Torque Low 8 bits
+    msg_data[0] = p_int >> 8  # Position High 8 Verified
+    msg_data[1] = p_int & 0xFF  # Position Low 8 Verified
+    msg_data[2] = v_int >> 4  # Speed High 8 bits Verified
+    msg_data[3] = ((v_int & 0xF) << 4) | (kp_int >> 8)  # Speed Low 4 bits, KP High 4 bits Verified
+    msg_data[4] = kp_int & 0xFF  # KP Low 8 bits Verified
+    msg_data[5] = kd_int >> 4  # Kd High 8 bits  Verified
+    msg_data[6] = ((kd_int & 0xF) << 4) | (t_int >> 8)  # Kd Low 4 bits, Torque High 4 bits Verified
+    msg_data[7] = t_int & 0xFF  # Torque Low 8 bits Verified
 
     return msg_data
 
@@ -135,8 +137,7 @@ def send_command(bus):
             v_des = float(input("Enter desired velocity: "))
             kp = float(input("Enter proportional gain (Kp): "))
             kd = float(input("Enter derivative gain (Kd): "))
-            t_ff = float(input("Enter feedforward torque: "))
-
+            t_ff = float(input("Enter feedforward torque: "))            
             msg_data = pack_cmd(p_des, v_des, kp, kd, t_ff)
             msg = can.Message(arbitration_id=mid, data=msg_data, is_extended_id=exid)
             bus.send(msg)
