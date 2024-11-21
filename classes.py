@@ -127,11 +127,11 @@ class Exoskeleton:
         print("Switched to", self.currentMode)
 
     def handle_knee_motor(self):
-        self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
+        self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5) #Add if statements here so that if mode 2 is active assist is called and if mode 3 resist is called instead of extend and retract
         self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
 
     def handle_ankle_motor(self):
-        self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
+        self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)#Add if statements here so that if mode 2 is active assist is called and if mode 3 resist is called instead of extend and retract
         self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
 
 
@@ -150,7 +150,7 @@ def start_exoskeleton():
             exo.userInterface.press_button1()
             exo.handle_knee_motor()  # Button1 controls Knee Motor
             exo.userInterface.release_button1()
-        elif command == "button2":
+        elif command == "button2": 
             exo.userInterface.press_button2()
             exo.handle_ankle_motor()  # Button2 controls Ankle Motor
             exo.userInterface.release_button2()
