@@ -21,27 +21,6 @@ def float_to_uint(x, x_min, x_max, bits):
     x = max(min(x, x_max), x_min)
     return int((x - x_min) * ((1 << bits) / span))
 
-def pack_cmd(p_des, v_des, kp, kd, t_ff):
-    """Pack command into a CAN message."""
-    p_int = float_to_uint(p_des, P_MIN, P_MAX, 16)
-    v_int = float_to_uint(v_des, V_MIN, V_MAX, 12)
-    kp_int = float_to_uint(kp, Kp_MIN, Kp_MAX, 12)
-    kd_int = float_to_uint(kd, Kd_MIN, Kd_MAX, 12)
-    t_int = float_to_uint(t_ff, T_MIN, T_MAX, 12)
-
-    # Pack ints into the CAN message data
-    msg_data = bytearray(8)
-    msg_data[0] = p_int >> 8  # Position High 8
-    msg_data[1] = p_int & 0xFF  # Position Low 8
-    msg_data[2] = v_int >> 4  # Speed High 8 bits
-    msg_data[3] = ((v_int & 0xF) << 4) | (kp_int >> 8)  # Speed Low 4 bits, KP High 4 bits
-    msg_data[4] = kp_int & 0xFF  # KP Low 8 bits
-    msg_data[5] = kd_int >> 4  # Kd High 8 bits
-    msg_data[6] = ((kd_int & 0xF) << 4) | (t_int >> 8)  # Kd Low 4 bits, Torque High 4 bits
-    msg_data[7] = t_int & 0xFF  # Torque Low 8 bits
-
-    return msg_data
-
 def writeLog(log_text, log_dir="logs"):
     print(log_text)  #for live debugging
     
@@ -66,6 +45,7 @@ def canHandlerThread(bus):
         msg = bus.recv()  # Wait for a new message
         if msg:
             writeLog(msg)
+            time.sleep(1)
 
 
 def comm_can_transmit_eid(bus, eid, data):
@@ -89,8 +69,10 @@ def comm_can_transmit_eid(bus, eid, data):
 
 def buffer_append(nBytes, bufferObject, number, startingPos):
     firstshift = (nBytes-1)*8
+    number = np.int32(number)
     for i in range(0,nBytes):
-        buffer_append(number >> firstshift-i*8)
+        temp = (number >> firstshift-i*8) & 0xFF
+        bufferObject.append(temp)
 
 def buffer_append_int32(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
     buffer_append(4,buffer,number,index)
@@ -102,13 +84,20 @@ def position_speed_accelleration(controller_id, position, speed, rpa):
     position_index = 0
     speed_index = 4
     rpa_index = 6
-    buffer = bytearray(8)
+    buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(position*10000), position_index)
-    buffer_append_int16(buffer, speed/10.0, speed_index)
-    buffer_append_int16(buffer, rpa/10.0, rpa_index)
+    buffer_append_int16(buffer, float(speed)/10.0, speed_index)
+    buffer_append_int16(buffer, float(rpa)/10.0, rpa_index)
     comm_can_transmit_eid((controller_id | (np.uint32(CAN_PACKET_ID.CAN_PACKET_SET_POS_SPD) << 8)), buffer)    
 
-def startCan():
+def eventLoop():
+    while True:
+        userInput=input("Press one to run the hard-coded command")
+        if userInput:
+            position_speed_accelleration(1, 90, 5, 5)
+
+
+def startCan(eventLoop):
     try:
         # Set up the CAN interface with the specified bitrate
         writeLog("Setting bitrate for can0...")
@@ -127,7 +116,7 @@ def startCan():
         # Start the receiver thread
         receiver_thread.start()
         # CALL MAIN EVENT LOOP BELOW, MUST BE A FUNCTION WITH A CONSTANT LOOP
-        
+        eventLoop()
 
     except Exception as e:
         print(f"An error occurred: {e}")
@@ -140,4 +129,4 @@ def startCan():
 
 #def extend(rangeOfMotionTop, rangeOfMotionBottom):
 
-startCan()
+startCan(eventLoop)
