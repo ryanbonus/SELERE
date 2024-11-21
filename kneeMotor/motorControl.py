@@ -6,20 +6,14 @@ from datetime import datetime
 import numpy as np
 from enum import Enum
 
-class CAN_PACKET_ID(Enum):
-    CAN_PACKET_SET_DUTY = 0            # Duty Cycle Mode
-    CAN_PACKET_SET_CURRENT = 1         # Current Loop Mode
-    CAN_PACKET_SET_CURRENT_BRAKE = 2   # Current Brake Mode
-    CAN_PACKET_SET_RPM = 3             # Speed Mode
-    CAN_PACKET_SET_POS = 4             # Position Mode
-    CAN_PACKET_SET_ORIGIN_HERE = 5     # Set Origin Mode
-    CAN_PACKET_SET_POS_SPD = 6
-
-def float_to_uint(x, x_min, x_max, bits):
-    """Converts a float to an unsigned int given the range and number of bits."""
-    span = x_max - x_min
-    x = max(min(x, x_max), x_min)
-    return int((x - x_min) * ((1 << bits) / span))
+# CAN packet definitions
+CAN_PACKET_SET_DUTY = 0
+CAN_PACKET_SET_CURRENT = 1
+CAN_PACKET_SET_CURRENT_BRAKE = 2
+CAN_PACKET_SET_RPM = 3
+CAN_PACKET_SET_POS = 4
+CAN_PACKET_SET_ORIGIN_HERE = 5
+CAN_PACKET_SET_POS_SPD = 6
 
 def writeLog(log_text, log_dir="logs"):
     print(log_text)  #for live debugging
@@ -80,28 +74,29 @@ def buffer_append_int32(buffer, number, index): #To-do, Delete this function and
 def buffer_append_int16(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
     buffer_append(2,buffer,number,index)
 
-def position_speed_accelleration(controller_id, position, speed, rpa):
+def position_speed_accelleration(controller_id, bus, position, speed, rpa):
     position_index = 0
     speed_index = 4
     rpa_index = 6
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(position*10000), position_index)
-    buffer_append_int16(buffer, float(speed)/10.0, speed_index)
-    buffer_append_int16(buffer, float(rpa)/10.0, rpa_index)
-    comm_can_transmit_eid((controller_id | (np.uint32(CAN_PACKET_ID.CAN_PACKET_SET_POS_SPD) << 8)), buffer)    
+    buffer_append_int16(buffer, speed/10, speed_index)
+    buffer_append_int16(buffer, rpa/10, rpa_index)
+    eid = (controller_id | int(CAN_PACKET_SET_POS_SPD) << 8)
+    comm_can_transmit_eid(bus, eid, buffer)    
 
-def eventLoop():
+def eventLoop(canBus):
     while True:
-        userInput=input("Press one to run the hard-coded command")
+        userInput=input("enter position")
         if userInput:
-            position_speed_accelleration(1, 90, 5, 5)
+            position_speed_accelleration(1, canBus, int(userInput), 6000, 3000)
 
 
 def startCan(eventLoop):
     try:
         # Set up the CAN interface with the specified bitrate
         writeLog("Setting bitrate for can0...")
-        os.system('sudo ip link set can0 type can bitrate 1000000')
+        os.system('sudo ip link set can0 type can bitrate 500000')
         writeLog("Bringing can0 interface up...")
         os.system('sudo ip link set can0 up')  # Bring the interface up
         writeLog("can0 interface is up.")
@@ -116,7 +111,7 @@ def startCan(eventLoop):
         # Start the receiver thread
         receiver_thread.start()
         # CALL MAIN EVENT LOOP BELOW, MUST BE A FUNCTION WITH A CONSTANT LOOP
-        eventLoop()
+        eventLoop(can0)
 
     except Exception as e:
         print(f"An error occurred: {e}")
