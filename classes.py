@@ -127,12 +127,40 @@ class Exoskeleton:
         print("Switched to", self.currentMode)
 
     def handle_knee_motor(self):
-        self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5) #Add if statements here so that if mode 2 is active assist is called and if mode 3 resist is called instead of extend and retract
-        self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
+        # In Mode 1: Extend and retract the knee
+        if self.currentMode == "Mode 1":
+            self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
+        # In Mode 2: Extend and retract the knee, with assisting torque
+        elif self.currentMode == "Mode 2":
+            self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
+            self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
+            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
+        # In Mode 3: Extend and retract the knee, with resisting torque
+        elif self.currentMode == "Mode 3":
+            self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
+            self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
+            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
 
     def handle_ankle_motor(self):
-        self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)#Add if statements here so that if mode 2 is active assist is called and if mode 3 resist is called instead of extend and retract
-        self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
+        # In Mode 1: Extend and retract the ankle
+        if self.currentMode == "Mode 1":
+            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
+        # In Mode 2: Extend and retract the ankle, with assisting torque
+        elif self.currentMode == "Mode 2":
+            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
+            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
+            self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
+        # In Mode 3: Extend and retract the ankle, with resisting torque
+        elif self.currentMode == "Mode 3":
+            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
+            self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
+            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
+            self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
 
 
 # Function to start the Exoskeleton and its loop in a separate thread
@@ -150,7 +178,7 @@ def start_exoskeleton():
             exo.userInterface.press_button1()
             exo.handle_knee_motor()  # Button1 controls Knee Motor
             exo.userInterface.release_button1()
-        elif command == "button2": 
+        elif command == "button2":
             exo.userInterface.press_button2()
             exo.handle_ankle_motor()  # Button2 controls Ankle Motor
             exo.userInterface.release_button2()
