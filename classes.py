@@ -133,15 +133,9 @@ class Exoskeleton:
             self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
         # In Mode 2: Extend and retract the knee, with assisting torque
         elif self.currentMode == "Mode 2":
-            self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
-            self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
             self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
         # In Mode 3: Extend and retract the knee, with resisting torque
         elif self.currentMode == "Mode 3":
-            self.kneeMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
-            self.kneeMotor.retract(100, 0, self.userInterface.button3_state, 5)
             self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
 
     def handle_ankle_motor(self):
@@ -151,15 +145,9 @@ class Exoskeleton:
             self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
         # In Mode 2: Extend and retract the ankle, with assisting torque
         elif self.currentMode == "Mode 2":
-            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
-            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
             self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
         # In Mode 3: Extend and retract the ankle, with resisting torque
         elif self.currentMode == "Mode 3":
-            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
-            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
             self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
 
 
