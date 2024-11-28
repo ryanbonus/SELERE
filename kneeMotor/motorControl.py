@@ -1,8 +1,9 @@
 import numpy as np
-from servoModeCAN import comm_can_transmit_eid
+from kneeMotor.motorCAN import comm_can_transmit_eid
 
 #Motor parameters
 BITRATE = 500000
+CONTROLLER_ID = 1
 
 # CAN packet definitions
 CAN_PACKET_SET_DUTY = 0
@@ -27,7 +28,7 @@ def buffer_append_int32(buffer, number, index): #To-do, Delete this function and
 def buffer_append_int16(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
     buffer_append(2,buffer,number,index)
 
-def position_speed_acceleration(bus, position, speed, rpa, controller_id=1):
+def position_speed_acceleration(bus, position, speed, rpa, controller_id=CONTROLLER_ID):
     position_index = 0
     speed_index = 4
     rpa_index = 6
@@ -38,14 +39,14 @@ def position_speed_acceleration(bus, position, speed, rpa, controller_id=1):
     eid = (controller_id | int(CAN_PACKET_SET_POS_SPD) << 8)
     comm_can_transmit_eid(bus, eid, buffer)
 
-def current(bus, current, controller_id=1):
+def current(bus, current, controller_id=CONTROLLER_ID):
     current_index = 0
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(current*1000), current_index)
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT) << 8)
     comm_can_transmit_eid(bus, eid, buffer)   
 
-def current_brake(bus, current, controller_id=1):
+def current_brake(bus, current, controller_id=CONTROLLER_ID):
     current_index = 0
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(current*1000), current_index)
