@@ -13,25 +13,25 @@ class KneeMotor:
         self.rangeOfMotionBottom = 0
         self.canbus = canbus
 
-    def extend(self, rangeOfMotionTop, desiredPosition, speed, acceleration):
+    def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
         #self.rangeOfMotionBottom = rangeOfMotionBottom
-        self.speed = speed
-        self.acceleration = acceleration
-        print("Extending Knee: Range [{}-{}], Speed {}, Acceleration {}".format(
-            desiredPosition, rangeOfMotionTop, speed, acceleration))
-        kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionTop-desiredPosition, speed, acceleration)
+        self.speed = desiredSpeed
+        self.acceleration = desiredAcceleration
+        print("Extending Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
+            desiredPosition, rangeOfMotionTop, desiredSpeed, desiredAcceleration))
+        kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionTop-desiredPosition, desiredSpeed, desiredAcceleration)
         self.position = desiredPosition
         time.sleep(1)
 
-    def retract(self, desiredPosition, rangeOfMotionBottom, speed, acceleration):
+    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, acceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
         #self.rangeOfMotionBottom = rangeOfMotionBottom
-        self.speed = speed
+        self.speed = desiredSpeed
         self.acceleration = acceleration
-        print("Retracting Knee: Range [{}-{}], Speed {}, Acceleration {}".format(
-             desiredPosition, rangeOfMotionBottom, speed, acceleration))
-        kneeMotor.motorControl.position_speed_acceleration(self.canbus, rangeOfMotionBottom-desiredPosition, speed, acceleration)
+        print("Retracting Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
+             desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration))
+        kneeMotor.motorControl.position_speed_acceleration(self.canbus, rangeOfMotionBottom-desiredPosition, desiredSpeed, desiredAcceleration)
         self.position=desiredPosition
         time.sleep(1)
 
@@ -146,7 +146,7 @@ class Exoskeleton:
         # In Mode 3: Extend and retract the ankle, with resisting torque
         elif self.currentMode == "Mode 3":
             self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
-
+.78
  
 # Function to start the Exoskeleton and its loop in a separate thread
 def start_exoskeleton(canbus):
