@@ -24,11 +24,11 @@ class KneeMotor:
         self.position = desiredPosition
         time.sleep(1)
 
-    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, acceleration):
+    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
         #self.rangeOfMotionBottom = rangeOfMotionBottom
         self.speed = desiredSpeed
-        self.acceleration = acceleration
+        self.acceleration = desiredAcceleration
         print("Retracting Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
              desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration))
         kneeMotor.motorControl.position_speed_acceleration(self.canbus, rangeOfMotionBottom-desiredPosition, desiredSpeed, desiredAcceleration)
