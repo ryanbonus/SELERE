@@ -1,5 +1,5 @@
 import numpy as np
-from servoModeCAN import comm_can_transmit_eid
+from kneeMotor.motorCAN import comm_can_transmit_eid
 
 #Motor parameters
 BITRATE = 500000

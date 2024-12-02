@@ -2,6 +2,11 @@ import threading
 import time
 import kneeMotor.motorCAN
 import kneeMotor.motorControl
+from sevenSegment import loop, setup
+
+SPEED_SCALAR = 1000
+DEFAULT_ACC = 3000
+
 # Class for Knee Motor
 class KneeMotor:
     def __init__(self, canbus):
@@ -9,31 +14,29 @@ class KneeMotor:
         self.speed = 0
         self.acceleration = 0
         self.torque = 0
-        self.rangeOfMotionTop = 45
+        self.rangeOfMotionTop = 0
         self.rangeOfMotionBottom = 0
         self.canbus = canbus
 
-    def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
-        #self.rangeOfMotionTop = rangeOfMotionTop
-        #self.rangeOfMotionBottom = rangeOfMotionBottom
+    def extend(self, currentPosition, desiredSpeed, desiredAcceleration, rangeOfMotionTop = 75):
+        self.rangeOfMotionTop = rangeOfMotionTop
         self.speed = desiredSpeed
         self.acceleration = desiredAcceleration
         print("Extending Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
-            desiredPosition, rangeOfMotionTop, desiredSpeed, desiredAcceleration))
-        kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionTop-desiredPosition, desiredSpeed, desiredAcceleration)
-        self.position = desiredPosition
+            currentPosition, rangeOfMotionTop, desiredSpeed, desiredAcceleration))
+        kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionTop-currentPosition, desiredSpeed, desiredAcceleration)
+        self.position = rangeOfMotionTop
         time.sleep(1)
 
-    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration):
-        #self.rangeOfMotionTop = rangeOfMotionTop
-        #self.rangeOfMotionBottom = rangeOfMotionBottom
+    def retract(self, currentPosition, desiredSpeed, desiredAcceleration, rangeOfMotionBottom = 0):
+        self.rangeOfMotionBottom = rangeOfMotionBottom
         self.speed = desiredSpeed
         self.acceleration = desiredAcceleration
         kneeMotor.motorCAN.write_log("Retracting Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
-             desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration), log_dir="logs")
+             currentPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration), log_dir="logs")
         
-        kneeMotor.motorControl.position_speed_acceleration(self.canbus, rangeOfMotionBottom-desiredPosition, desiredSpeed, desiredAcceleration)
-        self.position=desiredPosition
+        kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionBottom-currentPosition, desiredSpeed, desiredAcceleration)
+        self.position=rangeOfMotionBottom
         time.sleep(1)
 
     def assist(self, torque):
@@ -139,14 +142,14 @@ class Exoskeleton:
 
     def handle_knee_motor(self):
         if self.currentMode == "Mode 1":
-            self.kneeMotor.extend(100, 0, self.userInterface.button3_state*1000, 5000)
-            self.kneeMotor.retract(100, 0, self.userInterface.button3_state*1000, 5000)
+            self.kneeMotor.extend(self.kneeMotor.position, self.userInterface.button3_state*SPEED_SCALAR, DEFAULT_ACC, 75)
+            self.kneeMotor.retract(self.kneeMotor.position, self.userInterface.button3_state*SPEED_SCALAR, DEFAULT_ACC)
         # In Mode 2: Extend and retract the knee, with assisting torque
         elif self.currentMode == "Mode 2":
             self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
         # In Mode 3: Extend and retract the knee, with resisting torque
         elif self.currentMode == "Mode 3":
-            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
+            self.kneeMotor.resist(self.userInterface.button3_state*-1)  # Resist with torque
     
     def handle_ankle_motor(self):
         if self.currentMode == "Mode 1":
@@ -161,7 +164,7 @@ class Exoskeleton:
 .78
  
 # Function to start the Exoskeleton and its loop in a separate thread
-def start_exoskeleton(canbus):
+def debug_exoskeleton(canbus):
     exo = Exoskeleton(canbus)
 
     while True:
@@ -187,6 +190,26 @@ def start_exoskeleton(canbus):
             break
         else:
             print("Invalid command.")
+
+def start_exoskeleton(canbus):
+    exo = Exoskeleton(canbus)
+    setup()
+    uiDriver = threading.Thread(target=loop, args=(exo,), daemon=True)
+    uiDriver.start()
+    while True:
+        if exo.userInterface.modeButton == 1:
+            exo.nextMode()
+            while exo.userInterface.modeButton != 0:
+                time.sleep(1)
+
+        if exo.userInterface.button1 == 1:
+            exo.handle_knee_motor()
+        if exo.userInterface.button2 == 1:
+            exo.handle_ankle_motor()
+        if exo.userInterface.button3 == 1:
+            exo.userInterface.press_button3()
+        
+        
 
 # Run the program
 kneeMotor.motorCAN.start_can(start_exoskeleton)
