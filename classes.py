@@ -24,24 +24,29 @@ class KneeMotor:
         self.position = desiredPosition
         time.sleep(1)
 
-    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, acceleration):
+    def retract(self, desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
         #self.rangeOfMotionBottom = rangeOfMotionBottom
         self.speed = desiredSpeed
-        self.acceleration = acceleration
-        print("Retracting Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
-             desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration))
+        self.acceleration = desiredAcceleration
+        kneeMotor.motorCAN.write_log("Retracting Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
+             desiredPosition, rangeOfMotionBottom, desiredSpeed, desiredAcceleration), log_dir="logs")
+        
         kneeMotor.motorControl.position_speed_acceleration(self.canbus, rangeOfMotionBottom-desiredPosition, desiredSpeed, desiredAcceleration)
         self.position=desiredPosition
         time.sleep(1)
 
     def assist(self, torque):
         self.torque = torque
-        print("Assisting Knee with Torque:", torque)
+        kneeMotor.motorControl.current(self.canbus, torque)
+        kneeMotor.motorCAN.write_log("Assisting Knee with Torque:" + torque, log_dir="logs")
+     
 
     def resist(self, torque):
         self.torque = torque
-        print("Resisting Knee with Torque:", torque)
+        kneeMotor.motorControl.current(self.canbus, torque)
+        kneeMotor.motorCAN.write_log("Resisting Knee with Torque:", torque)
+
 
 
 # Class for Ankle Motor
@@ -133,9 +138,16 @@ class Exoskeleton:
         print("Switched to", self.currentMode)
 
     def handle_knee_motor(self):
-        self.kneeMotor.extend(100, 0, self.userInterface.button3_state*1000, 3000) #Add if statements here so that if mode 2 is active assist is called and if mode 3 resist is called instead of extend and retract
-        self.kneeMotor.retract(100, 0, self.userInterface.button3_state*1000, 3000)
-
+        if self.currentMode == "Mode 1":
+            self.kneeMotor.extend(100, 0, self.userInterface.button3_state*1000, 5000)
+            self.kneeMotor.retract(100, 0, self.userInterface.button3_state*1000, 5000)
+        # In Mode 2: Extend and retract the knee, with assisting torque
+        elif self.currentMode == "Mode 2":
+            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
+        # In Mode 3: Extend and retract the knee, with resisting torque
+        elif self.currentMode == "Mode 3":
+            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
+    
     def handle_ankle_motor(self):
         if self.currentMode == "Mode 1":
             self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
