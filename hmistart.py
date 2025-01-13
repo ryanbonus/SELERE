@@ -40,7 +40,7 @@ def update_height(val):
     height_tank.coords(height_fill, 0, slider_height * (1 - float(val) / 100), slider_width, slider_height)
 
 # Intensity tank
-intensity_label = tk.Label(slider_frame, text="Intensity")
+intensity_label = tk.Label(slider_frame, text="Intensityyy")
 intensity_label.grid(row=0, column=0, padx=10, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="blue")
