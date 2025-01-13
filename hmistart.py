@@ -1,4 +1,5 @@
 import tkinter as tk
+from tkinter import ttk
 
 # Initialize main window
 root = tk.Tk()
@@ -33,11 +34,11 @@ slider_height = 250
 slider_width = 50
 
 def update_intensity(val):
-    # Flip the direction for intensity slider (0 at bottom, 100 at top)
+    # Flip the direction for intensity slider (start from bottom)
     intensity_tank.coords(intensity_fill, 0, slider_height - (slider_height * (float(val) / 100)), slider_width, slider_height)
 
 def update_height(val):
-    # Flip the direction for height slider (0 at bottom, 100 at top)
+    # Flip the direction for height slider (start from bottom)
     height_tank.coords(height_fill, 0, slider_height - (slider_height * (float(val) / 100)), slider_width, slider_height)
 
 # Intensity tank
@@ -46,7 +47,7 @@ intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="blue")
 intensity_tank.grid(row=1, column=0, padx=5, pady=5)
-intensity_slider = tk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_intensity)
+intensity_slider = ttk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_intensity)
 intensity_slider.set(0)  # Set initial value to 0, which is at the bottom
 intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
 
@@ -56,13 +57,9 @@ height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 height_fill = height_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="green")
 height_tank.grid(row=1, column=2, padx=5, pady=5)
-height_slider = tk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_height)
+height_slider = ttk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_height)
 height_slider.set(0)  # Set initial value to 0, which is at the bottom
 height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
-
-# Ensure sliders update positions on startup
-update_intensity(intensity_slider.get())
-update_height(height_slider.get())
 
 # Configure equal column widths
 for i in range(4):
