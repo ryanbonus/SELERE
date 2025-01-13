@@ -23,8 +23,9 @@ slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.05, rely=0.15, relwidth=0.25, relheight=0.15)
 
+# Adjusted tab_frame placement to move the buttons to the left
 tab_frame = tk.Frame(root)
-tab_frame.place(relx=0.7, rely=0.05, relwidth=0.25, relheight=0.2)
+tab_frame.place(relx=0.35, rely=0.05, relwidth=0.6, relheight=0.2)  # Increased width
 
 joint_frame = tk.Frame(root)
 joint_frame.place(relx=0.4, rely=0.3, relwidth=0.35, relheight=0.5)
@@ -81,7 +82,7 @@ for i in range(len(modes)):
 # Adjusted mode_frame placement
 mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
-# Tab buttons
+# Tab buttons (no change to the button creation, just adjusted packing and placement)
 tabs = ["User", "Edit", "Analytics", "DOC"]
 for tab in tabs:
     tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=2, width=8)
