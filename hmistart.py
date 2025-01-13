@@ -40,7 +40,7 @@ def update_height(val):
     height_tank.coords(height_fill, 0, slider_height * (1 - float(val) / 100), slider_width, slider_height)
 
 # Intensity tank
-intensity_label = tk.Label(slider_frame, text="Intensityyyy")
+intensity_label = tk.Label(slider_frame, text="Intensity")
 intensity_label.grid(row=0, column=0, padx=10, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="blue")
@@ -60,12 +60,16 @@ height_slider.grid(row=1, column=3, padx=10, pady=5, sticky="ns")
 
 # Mode buttons
 modes = ["Mode 1", "Mode 2", "Mode 3"]
-for mode in modes:
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1, width=4)
-    mode_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
+for idx, mode in enumerate(modes):
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1)
+    mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
+
+# Configure equal column widths
+for i in range(len(modes)):
+    mode_frame.grid_columnconfigure(i, weight=1)
 
 # Adjusted mode_frame placement
-mode_frame.place(relx=0.05, rely=0.05, relwidth=0.2, relheight=0.1)
+mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
 
 # Tab buttons
