@@ -42,33 +42,31 @@ def update_height(val):
 
 # Intensity tank
 intensity_label = tk.Label(slider_frame, text="Intensity")
-intensity_label.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="blue")
-intensity_tank.grid(row=1, column=0, padx=10, pady=15, sticky="nsew")
+intensity_tank.grid(row=1, column=0, padx=5, pady=5)
 intensity_slider = tk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_intensity)
 intensity_slider.set(0)  # Set initial value to 0, which is at the bottom
-intensity_slider.grid(row=1, column=1, padx=10, pady=15, sticky="ns")
+intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
 
 # Height tank
 height_label = tk.Label(slider_frame, text="Height")
-height_label.grid(row=0, column=2, padx=10, pady=10, sticky="nsew")
+height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 height_fill = height_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="green")
-height_tank.grid(row=1, column=2, padx=10, pady=15, sticky="nsew")
+height_tank.grid(row=1, column=2, padx=5, pady=5)
 height_slider = tk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_height)
 height_slider.set(0)  # Set initial value to 0, which is at the bottom
-height_slider.grid(row=1, column=3, padx=10, pady=15, sticky="ns")
+height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
 
 # Ensure sliders update positions on startup
 update_intensity(intensity_slider.get())
 update_height(height_slider.get())
 
 # Configure equal column widths
-slider_frame.grid_columnconfigure(0, weight=1)
-slider_frame.grid_columnconfigure(1, weight=1)
-slider_frame.grid_columnconfigure(2, weight=1)
-slider_frame.grid_columnconfigure(3, weight=1)
+for i in range(4):
+    slider_frame.grid_columnconfigure(i, weight=1)
 
 # Ensure proper row configuration
 slider_frame.grid_rowconfigure(1, weight=1)
