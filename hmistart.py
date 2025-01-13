@@ -61,8 +61,11 @@ height_slider.grid(row=1, column=3, padx=10, pady=5, sticky="ns")
 # Mode buttons
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for mode in modes:
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=2, width=8)
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1, width=6)
     mode_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
+
+# Adjusted mode_frame placement
+mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
 # Tab buttons
 tabs = ["User", "Edit", "Analytics", "DOC"]
