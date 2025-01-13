@@ -23,7 +23,7 @@ mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.05, rely=0.15, relwidth=0.25, relheight=0.15)
 
 tab_frame = tk.Frame(root)
-tab_frame.place(relx=0.4, rely=0.05, relwidth=0.25, relheight=0.2)  # Shifted to the left
+tab_frame.place(relx=0.5, rely=0.05, relwidth=0.4, relheight=0.2)  # Shifted to the left with more width
 
 joint_frame = tk.Frame(root)
 joint_frame.place(relx=0.4, rely=0.3, relwidth=0.35, relheight=0.5)
@@ -84,10 +84,10 @@ for i in range(len(modes)):
 # Adjusted mode_frame placement
 mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
-# Tab buttons
-tabs = ["User", "Edit", "Analytics", "DOC"]
+# Tab buttons (renaming DOC to Doc)
+tabs = ["User", "Edit", "Analytics", "Doc"]
 for idx, tab in enumerate(tabs):
-    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=2, width=8)
+    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=2, width=len(tab))
     tab_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")  # Use grid instead of pack
 
 # Configure equal column widths for tab buttons
