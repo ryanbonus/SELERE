@@ -69,10 +69,10 @@ for i in range(4):
 # Ensure proper row configuration
 slider_frame.grid_rowconfigure(1, weight=1)
 
-# Mode buttons (made bigger)
+# Mode buttons
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=2, width=12)  # Larger size
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1)
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
 
 # Configure equal column widths for mode buttons
@@ -82,10 +82,10 @@ for i in range(len(modes)):
 # Adjusted mode_frame placement
 mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
-# Tab buttons (smaller size and "DOC" renamed to "Doc")
-tabs = ["User", "Edit", "Analytics", "Doc"]  # Renamed "DOC" to "Doc"
+# Tab buttons (no change to the button creation, just adjusted packing and placement)
+tabs = ["User", "Edit", "Analytics", "DOC"]
 for tab in tabs:
-    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=1, width=6)  # Smaller size
+    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=2, width=8)
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Joint control buttons
