@@ -40,23 +40,29 @@ def update_height(val):
     height_tank.coords(height_fill, 0, slider_height * (1 - float(val) / 100), slider_width, slider_height)
 
 # Intensity tank
-intensity_label = tk.Label(slider_frame, text="Intensity")
-intensity_label.grid(row=0, column=0, padx=10, pady=5)
+intensity_label = tk.Label(slider_frame, text="Intensityy")
+intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="blue")
-intensity_tank.grid(row=1, column=0, padx=10, pady=5)
+intensity_tank.grid(row=1, column=0, padx=5, pady=5)
 intensity_slider = ttk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_intensity)
-intensity_slider.grid(row=1, column=1, padx=10, pady=5, sticky="ns")
+intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
 
 # Height tank
 height_label = tk.Label(slider_frame, text="Height")
-height_label.grid(row=0, column=2, padx=10, pady=5)
+height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_width, height=slider_height, bg="lightgray")
 height_fill = height_tank.create_rectangle(0, slider_height, slider_width, slider_height, fill="green")
-height_tank.grid(row=1, column=2, padx=10, pady=5)
+height_tank.grid(row=1, column=2, padx=5, pady=5)
 height_slider = ttk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_height)
-height_slider.grid(row=1, column=3, padx=10, pady=5, sticky="ns")
+height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
 
+# Configure equal column widths
+for i in range(4):
+    slider_frame.grid_columnconfigure(i, weight=1)
+
+# Ensure proper row configuration
+slider_frame.grid_rowconfigure(1, weight=1)
 
 # Mode buttons
 modes = ["Mode 1", "Mode 2", "Mode 3"]
@@ -64,13 +70,12 @@ for idx, mode in enumerate(modes):
     mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1)
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
 
-# Configure equal column widths
+# Configure equal column widths for mode buttons
 for i in range(len(modes)):
     mode_frame.grid_columnconfigure(i, weight=1)
 
 # Adjusted mode_frame placement
 mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
-
 
 # Tab buttons
 tabs = ["User", "Edit", "Analytics", "DOC"]
