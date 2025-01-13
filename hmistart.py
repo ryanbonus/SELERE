@@ -57,6 +57,7 @@ height_tank.grid(row=1, column=2, padx=10, pady=5)
 height_slider = ttk.Scale(slider_frame, from_=0, to=100, orient="vertical", command=update_height)
 height_slider.grid(row=1, column=3, padx=10, pady=5, sticky="ns")
 
+
 # Mode buttons
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for mode in modes:
