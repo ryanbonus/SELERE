@@ -28,7 +28,7 @@ tab_frame = tk.Frame(root)
 tab_frame.place(relx=0.55, rely=0.05, relwidth=0.4, relheight=0.1)  # Shifted right by increasing relx from 0.3 to 0.6
 
 joint_frame = tk.Frame(root)
-joint_frame.place(relx=0.4, rely=0.3, relwidth=0.35, relheight=0.5)
+joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)  # Increased the size of the joint_frame
 
 # Tank-style sliders
 slider_height = 250
@@ -91,19 +91,21 @@ for tab in tabs:
     tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t))
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-# Joint control buttons
+# Joint control buttons (much bigger size and more spacing)
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=3, width=8)
-    joint_button.grid(row=row, column=col, padx=10, pady=10, sticky="nsew")
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20)  # Much bigger size
+    joint_button.grid(row=row, column=col, padx=40, pady=40, sticky="nsew")  # Increased spacing
     col += 1
     if col > 1:
         col = 0
         row += 1
 
-for i in range(2):
+# Configure the grid to allow more space for the joint buttons
+for i in range(2):  # 2 rows for joint buttons
     joint_frame.grid_rowconfigure(i, weight=1)
+for i in range(2):  # 2 columns for joint buttons
     joint_frame.grid_columnconfigure(i, weight=1)
 
 # Start the main loop
