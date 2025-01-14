@@ -23,9 +23,9 @@ slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.05, rely=0.15, relwidth=0.25, relheight=0.15)
 
-# Adjusted tab_frame placement to move the buttons to the left
+# Adjusted tab_frame placement to shift right
 tab_frame = tk.Frame(root)
-tab_frame.place(relx=0.35, rely=0.05, relwidth=0.6, relheight=0.2)  # Increased width
+tab_frame.place(relx=0.55, rely=0.05, relwidth=0.4, relheight=0.1)  # Shifted right by increasing relx from 0.3 to 0.6
 
 joint_frame = tk.Frame(root)
 joint_frame.place(relx=0.4, rely=0.3, relwidth=0.35, relheight=0.5)
@@ -69,10 +69,10 @@ for i in range(4):
 # Ensure proper row configuration
 slider_frame.grid_rowconfigure(1, weight=1)
 
-# Mode buttons
+# Mode buttons (increased size)
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=1)
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15)  # Increased height and width
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
 
 # Configure equal column widths for mode buttons
@@ -82,10 +82,13 @@ for i in range(len(modes)):
 # Adjusted mode_frame placement
 mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
-# Tab buttons (no change to the button creation, just adjusted packing and placement)
+# Ensure the mode buttons frame expands to show the entire button
+mode_frame.grid_rowconfigure(0, weight=1)
+
+# Tab buttons (shrink effect through reduced frame size)
 tabs = ["User", "Edit", "Analytics", "DOC"]
 for tab in tabs:
-    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t), height=2, width=8)
+    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t))
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Joint control buttons
