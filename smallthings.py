@@ -19,11 +19,11 @@ frame.pack(pady=20)
 canvas = tk.Canvas(frame, width=100, height=250)
 canvas.grid(row=0, column=0)
 
-# Draw the outline of the tank (adjust the coordinates to match the canvas height)
-canvas.create_rectangle(10, 10, 60, 200, outline="black", width=2)
+# Draw the outline of the tank
+canvas.create_rectangle(10, 5, 60, 200, outline="black", width=2)
 
-# Create a vertical slider that starts at the bottom with 0 at the bottom and goes up to 100
-slider = tk.Scale(frame, from_=0, to=100, orient="vertical", command=update_tank, sliderlength=30, length=250)
+# Create a vertical slider that starts at the bottom with 0 at the bottom
+slider = tk.Scale(frame, from_=100, to=0, orient="vertical", command=update_tank, sliderlength=30)
 slider.set(0)  # Initial value is 0, starting at the bottom
 slider.grid(row=0, column=1, padx=10)
 
