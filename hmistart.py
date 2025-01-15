@@ -9,6 +9,7 @@ root.geometry("1024x600")
 # Variables to track selected mode and joint
 selected_mode = tk.StringVar(value="Mode 1")
 selected_joint = tk.StringVar(value="Left Knee")
+selected_tab = tk.StringVar(value="Edit")
 
 # Function placeholders for button actions
 def set_mode(mode):
@@ -17,12 +18,19 @@ def set_mode(mode):
     print(f"Mode set to: {mode}")
 
 def switch_tab(tab):
+    selected_tab.set(tab)
+    update_button_colors()
+    update_visibility()
     print(f"Switched to {tab} tab")
 
 def control_joint(joint):
     selected_joint.set(joint)
     update_button_colors()
     print(f"Controlling {joint}")
+
+# Function for Start button
+def start_button_action():
+    print("Start button clicked")
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)
@@ -106,7 +114,7 @@ joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=12, width=40, font=("Arial", 22))
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 18))
     joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
@@ -128,8 +136,40 @@ def update_button_colors():
     for button, joint in zip(joint_buttons, joints):
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
-# Set initial button colors
+# Function to control visibility of elements based on tab selection
+def update_visibility():
+    if selected_tab.get() == "Edit":
+        # Show everything for Edit
+        slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
+        mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+    else:  # User tab
+        # Show mode buttons and status frame for User mode
+        mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+        status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+        
+        # Show joint frame for user mode with fixed size
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        
+        # Hide slider frame for User mode
+        slider_frame.place_forget()
+
+        # Create a frame for the Start button and blank tank, arranged side by side
+        button_tank_frame = tk.Frame(root)
+        button_tank_frame.place(relx=0.05, rely=0.7, relwidth=0.25, relheight=0.3)  # Adjusted relative height to 0.3
+
+        # Start button (on the left)
+        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=16, width=20, font=("Arial", 14))
+        start_button.pack(side="left", padx=5, fill="both", expand=True)
+
+        # Blank tank (on the right) with the same height as the Start button
+        blank_tank = tk.Canvas(button_tank_frame, width=100, height=400, bg="lightgray")  # height now 400
+        blank_tank.pack(side="left", fill="both", expand=True)
+
+# Set initial button colors and visibility
 update_button_colors()
+update_visibility()
 
 # Start the main loop
 root.mainloop()
