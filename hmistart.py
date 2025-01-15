@@ -13,7 +13,6 @@ selected_joint = tk.StringVar(value="Left Knee")
 # Function placeholders for button actions
 def set_mode(mode):
     selected_mode.set(mode)
-    update_button_colors()
     print(f"Mode set to: {mode}")
 
 def switch_tab(tab):
@@ -21,7 +20,6 @@ def switch_tab(tab):
 
 def control_joint(joint):
     selected_joint.set(joint)
-    update_button_colors()
     print(f"Controlling {joint}")
 
 # Create frames for different sections
@@ -33,14 +31,14 @@ mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
 # Status frame with labels side by side
 status_frame = tk.Frame(root)
-status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.05)
+status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)  # Increased relheight
 
-# Increased width and padding for the status labels
-mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 16), relief="solid", width=15)
-mode_status_label.pack(side="left", padx=10, pady=5, expand=True, fill="both")
+# Increased width and adjusted padding for better visibility
+mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 16), relief="solid", width=12)
+mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 16), relief="solid", width=15)
-joint_status_label.pack(side="left", padx=10, pady=5, expand=True, fill="both")
+joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 16), relief="solid", width=12)
+joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
 tab_frame = tk.Frame(root)
@@ -84,12 +82,10 @@ for i in range(4):
 slider_frame.grid_rowconfigure(1, weight=1)
 
 # Mode buttons
-mode_buttons = []
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
     mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15)
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
-    mode_buttons.append(mode_button)
 
 for i in range(len(modes)):
     mode_frame.grid_columnconfigure(i, weight=1)
@@ -102,13 +98,11 @@ for tab in tabs:
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Joint control buttons
-joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
     joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20)
     joint_button.grid(row=row, column=col, padx=40, pady=40, sticky="nsew")
-    joint_buttons.append(joint_button)
     col += 1
     if col > 1:
         col = 0
@@ -118,17 +112,6 @@ for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
 for i in range(2):
     joint_frame.grid_columnconfigure(i, weight=1)
-
-# Function to update button colors based on selection
-def update_button_colors():
-    for button, mode in zip(mode_buttons, modes):
-        button.config(bg="green" if mode == selected_mode.get() else root.cget("bg"))
-    
-    for button, joint in zip(joint_buttons, joints):
-        button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
-
-# Set initial button colors
-update_button_colors()
 
 # Start the main loop
 root.mainloop()
