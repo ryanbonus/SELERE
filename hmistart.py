@@ -101,12 +101,12 @@ for tab in tabs:
     tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t))
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-# Joint control buttons (larger size and text)
+# Joint control buttons (much larger size and text)
 joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=8, width=25, font=("Arial", 18))
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=15, width=30, font=("Arial", 22))
     joint_button.grid(row=row, column=col, padx=40, pady=40, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
