@@ -33,13 +33,13 @@ mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
 
 # Status frame with labels side by side
 status_frame = tk.Frame(root)
-status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)  # Increased height for better text appearance
+status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
-# Adjusted width for the status labels
-mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 16), relief="solid", width=7)
+# Adjusted width and font size for the status labels
+mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 14), relief="solid", width=7)
 mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 16), relief="solid", width=14)
+joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 14), relief="solid", width=14)
 joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
