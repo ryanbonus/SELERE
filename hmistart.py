@@ -10,9 +10,21 @@ root.geometry("1024x600")
 selected_mode = tk.StringVar(value="Mode 1")
 selected_joint = tk.StringVar(value="Left Knee")
 
+# Dictionary to store mode and joint buttons
+mode_buttons = {}
+joint_buttons = {}
+
+# Function to update button colors
+def update_button_colors():
+    for mode, button in mode_buttons.items():
+        button.config(bg="green" if mode == selected_mode.get() else "SystemButtonFace")
+    for joint, button in joint_buttons.items():
+        button.config(bg="green" if joint == selected_joint.get() else "SystemButtonFace")
+
 # Function placeholders for button actions
 def set_mode(mode):
     selected_mode.set(mode)
+    update_button_colors()
     print(f"Mode set to: {mode}")
 
 def switch_tab(tab):
@@ -20,6 +32,7 @@ def switch_tab(tab):
 
 def control_joint(joint):
     selected_joint.set(joint)
+    update_button_colors()
     print(f"Controlling {joint}")
 
 # Create frames for different sections
@@ -85,6 +98,7 @@ modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
     mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15)
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
+    mode_buttons[mode] = mode_button  # Store the button reference
 
 for i in range(len(modes)):
     mode_frame.grid_columnconfigure(i, weight=1)
@@ -102,6 +116,7 @@ row, col = 0, 0
 for joint in joints:
     joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20)
     joint_button.grid(row=row, column=col, padx=40, pady=40, sticky="nsew")
+    joint_buttons[joint] = joint_button  # Store the button reference
     col += 1
     if col > 1:
         col = 0
@@ -111,6 +126,9 @@ for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
 for i in range(2):
     joint_frame.grid_columnconfigure(i, weight=1)
+
+# Initial button color update
+update_button_colors()
 
 # Start the main loop
 root.mainloop()
