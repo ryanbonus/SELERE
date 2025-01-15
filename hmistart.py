@@ -101,19 +101,20 @@ for tab in tabs:
     tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t))
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-# Joint control buttons (much bigger boxes for the buttons)
+# Joint control buttons (adjusted height/width for larger boxes)
 joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=10, width=30, font=("Arial", 22))
-    joint_button.grid(row=row, column=col, padx=40, pady=40, sticky="nsew")
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=12, width=40, font=("Arial", 22))
+    joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
     if col > 1:
         col = 0
         row += 1
 
+# Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
 for i in range(2):
