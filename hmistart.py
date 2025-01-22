@@ -132,7 +132,7 @@ for i in range(2):
 def update_button_colors():
     for button, mode in zip(mode_buttons, modes):
         button.config(bg="green" if mode == selected_mode.get() else root.cget("bg"))
-    
+
     for button, joint in zip(joint_buttons, joints):
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
@@ -148,24 +148,26 @@ def update_visibility():
         # Show mode buttons and status frame for User mode
         mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
         status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
-        
+
         # Show joint frame for user mode with fixed size
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        
+
         # Hide slider frame for User mode
         slider_frame.place_forget()
 
         # Create a frame for the Start button and blank tank, arranged side by side
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(relx=0.05, rely=0.7, relwidth=0.25, relheight=0.3)  # Adjusted relative height to 0.3
+        button_tank_frame.place(x=50, y=200, width=300, height=360)  # Set frame height to fit both elements
 
         # Start button (on the left)
-        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=16, width=20, font=("Arial", 14))
-        start_button.pack(side="left", padx=5, fill="both", expand=True)
+        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
+        start_button.place(x=0, y=0, width=200, height=360)  # Place at the top of the frame
 
-        # Blank tank (on the right) with the same height as the Start button
-        blank_tank = tk.Canvas(button_tank_frame, width=100, height=400, bg="lightgray")  # height now 400
-        blank_tank.pack(side="left", fill="both", expand=True)
+        # Blank tank (on the right)
+        blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
+        blank_tank.place(x=200, y=0, width=100, height=360)  # Place at the top of the frame
+
+
 
 # Set initial button colors and visibility
 update_button_colors()
