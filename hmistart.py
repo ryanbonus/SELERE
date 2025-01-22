@@ -138,21 +138,27 @@ def update_button_colors():
 
 # Function to control visibility of elements based on tab selection
 def update_visibility():
+    global button_tank_frame  # Declare the frame as global here to avoid the error
+    # Always show mode_frame and status_frame
+    mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+
     if selected_tab.get() == "Edit":
         # Show everything for Edit
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
-        mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
-    else:  # User tab
-        # Show mode buttons and status frame for User mode
-        mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
-        status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+        
+        # Hide the button and tank frame for "User" tab
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass  # If the frame hasn't been created yet, ignore this error
 
+    else:  # User tab
         # Show joint frame for user mode with fixed size
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
-        # Hide slider frame for User mode
+        # Hide the slider frame for User mode
         slider_frame.place_forget()
 
         # Create a frame for the Start button and blank tank, arranged side by side
