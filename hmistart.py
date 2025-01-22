@@ -8,7 +8,7 @@ root.geometry("1024x600")
 
 # Variables to track selected mode and joint
 selected_mode = tk.StringVar(value="Mode 1")
-selected_joint = tk.StringVar(value="Left Kneeee")
+selected_joint = tk.StringVar(value="Left Knee")
 selected_tab = tk.StringVar(value="Edit")
 
 # Function placeholders for button actions
