@@ -136,7 +136,6 @@ def update_button_colors():
     for button, joint in zip(joint_buttons, joints):
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
-# Function to control visibility of elements based on tab selection
 def update_visibility():
     global button_tank_frame  # Declare the frame as global here to avoid the error
     # Always show mode_frame and status_frame
@@ -147,7 +146,12 @@ def update_visibility():
         # Show everything for Edit
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        
+
+        # Raise the canvases after placing them in the layout
+        root.update_idletasks()  # Force the layout to update
+        root.tk.call("raise", intensity_tank._w)
+        root.tk.call("raise", height_tank._w)
+
         # Hide the button and tank frame for "User" tab
         try:
             button_tank_frame.place_forget()
@@ -172,7 +176,6 @@ def update_visibility():
         # Blank tank (on the right)
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=200, y=0, width=100, height=360)  # Place at the top of the frame
-
 
 
 # Set initial button colors and visibility
