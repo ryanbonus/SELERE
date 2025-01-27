@@ -167,15 +167,15 @@ def update_visibility():
 
         # Create a frame for the Start button and blank tank, arranged side by side
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=200, width=300, height=360)  # Set frame height to fit both elements
+        button_tank_frame.place(x=50, y=350, width=600, height=560)  # Set frame height to fit both elements
 
         # Start button (on the left)
         start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
-        start_button.place(x=0, y=0, width=200, height=360)  # Place at the top of the frame
+        start_button.place(x=0, y=0, width=500, height=560)  # Place at the top of the frame
 
         # Blank tank (on the right)
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
-        blank_tank.place(x=200, y=0, width=100, height=360)  # Place at the top of the frame
+        blank_tank.place(x=500, y=0, width=100, height=560)  # Place at the top of the frame
 
 
 # Set initial button colors and visibility
