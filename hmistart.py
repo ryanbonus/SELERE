@@ -95,7 +95,15 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15, font=("Arial", 18))
+    mode_button = tk.Button(
+        mode_frame, 
+        text=mode, 
+        command=lambda m=mode: set_mode(m), 
+        height=3, 
+        width=15, 
+        font=("Arial", 18), 
+        activebackground="green"
+    )
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
@@ -110,16 +118,25 @@ for tab in tabs:
         tab_frame, 
         text=tab, 
         command=lambda t=tab: switch_tab(t), 
-        font=("Arial", 24)  # Modify the font size here
+        font=("Arial", 24),
+        activebackground="green"
     )
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-# Joint control buttons (adjusted height/width for larger boxes)
+# Joint control buttons
 joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 32))
+    joint_button = tk.Button(
+        joint_frame, 
+        text=joint, 
+        command=lambda j=joint: control_joint(j), 
+        height=6, 
+        width=20, 
+        font=("Arial", 32), 
+        activebackground="green"
+    )
     joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
@@ -127,7 +144,6 @@ for joint in joints:
         col = 0
         row += 1
 
-# Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
 for i in range(2):
@@ -142,50 +158,38 @@ def update_button_colors():
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
 def update_visibility():
-    global button_tank_frame  # Declare the frame as global here to avoid the error
-    # Always show mode_frame and status_frame
+    global button_tank_frame
+
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
-        # Show everything for Edit
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
-        # Raise the canvases after placing them in the layout
-        root.update_idletasks()  # Force the layout to update
+        root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
 
-        # Hide the button and tank frame for "User" tab
         try:
             button_tank_frame.place_forget()
         except NameError:
-            pass  # If the frame hasn't been created yet, ignore this error
+            pass
 
-    else:  # User tab
-        # Show joint frame for user mode with fixed size
+    else:
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-
-        # Hide the slider frame for User mode
         slider_frame.place_forget()
 
-        # Create a frame for the Start button and blank tank, arranged side by side
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=600, height=560)  # Set frame height to fit both elements
+        button_tank_frame.place(x=50, y=350, width=600, height=560)
 
-        # Start button (on the left)
-        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
-        start_button.place(x=0, y=0, width=500, height=560)  # Place at the top of the frame
+        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50), activebackground="green")
+        start_button.place(x=0, y=0, width=500, height=560)
 
-        # Blank tank (on the right)
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
-        blank_tank.place(x=500, y=0, width=100, height=560)  # Place at the top of the frame
+        blank_tank.place(x=500, y=0, width=100, height=560)
 
-
-# Set initial button colors and visibility
 update_button_colors()
 update_visibility()
 
-# Start the main loop
 root.mainloop()
