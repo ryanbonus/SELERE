@@ -13,20 +13,23 @@ selected_tab = tk.StringVar(value="Edit")
 
 # Function placeholders for button actions
 def set_mode(mode):
-    selected_mode.set(mode)
-    update_button_colors()
-    print(f"Mode set to: {mode}")
+    if selected_mode.get() != mode:  # Only change if it's different
+        selected_mode.set(mode)
+        update_button_colors()
+        print(f"Mode set to: {mode}")
 
 def switch_tab(tab):
-    selected_tab.set(tab)
-    update_button_colors()
-    update_visibility()
-    print(f"Switched to {tab} tab")
+    if selected_tab.get() != tab:  # Only change if it's different
+        selected_tab.set(tab)
+        update_button_colors()
+        update_visibility()
+        print(f"Switched to {tab} tab")
 
 def control_joint(joint):
-    selected_joint.set(joint)
-    update_button_colors()
-    print(f"Controlling {joint}")
+    if selected_joint.get() != joint:  # Only change if it's different
+        selected_joint.set(joint)
+        update_button_colors()
+        print(f"Controlling {joint}")
 
 # Function for Start button
 def start_button_action():
