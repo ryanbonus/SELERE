@@ -52,10 +52,10 @@ joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
 tab_frame = tk.Frame(root)
-tab_frame.place(relx=0.55, rely=0.05, relwidth=0.4, relheight=0.1)
+tab_frame.place(relx=0.425, rely=0.05, relwidth=0.5, relheight=0.2)
 
 joint_frame = tk.Frame(root)
-joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
 # Tank-style sliders
 slider_height = 250
@@ -106,7 +106,12 @@ mode_frame.grid_rowconfigure(0, weight=1)
 # Tab buttons
 tabs = ["User", "Edit", "Analytics", "DOC"]
 for tab in tabs:
-    tab_button = tk.Button(tab_frame, text=tab, command=lambda t=tab: switch_tab(t))
+    tab_button = tk.Button(
+        tab_frame, 
+        text=tab, 
+        command=lambda t=tab: switch_tab(t), 
+        font=("Arial", 16)  # Modify the font size here
+    )
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Joint control buttons (adjusted height/width for larger boxes)
