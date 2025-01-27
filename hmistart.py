@@ -6,7 +6,7 @@ root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
 
-# Variables to track selected mode and joint
+# Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
 selected_joint = tk.StringVar(value="Left Knee")
 selected_tab = tk.StringVar(value="Edit")
@@ -95,15 +95,7 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(
-        mode_frame, 
-        text=mode, 
-        command=lambda m=mode: set_mode(m), 
-        height=3, 
-        width=15, 
-        font=("Arial", 18), 
-        activebackground="green"
-    )
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15, font=("Arial", 18), activebackground="green")
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
@@ -112,6 +104,7 @@ for i in range(len(modes)):
 mode_frame.grid_rowconfigure(0, weight=1)
 
 # Tab buttons
+tab_buttons = []
 tabs = ["User", "Edit", "Analytics", "DOC"]
 for tab in tabs:
     tab_button = tk.Button(
@@ -119,24 +112,19 @@ for tab in tabs:
         text=tab, 
         command=lambda t=tab: switch_tab(t), 
         font=("Arial", 24),
+        height=1, 
+        width=10, 
         activebackground="green"
     )
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
+    tab_buttons.append(tab_button)
 
-# Joint control buttons
+# Joint control buttons (adjusted height/width for larger boxes)
 joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(
-        joint_frame, 
-        text=joint, 
-        command=lambda j=joint: control_joint(j), 
-        height=6, 
-        width=20, 
-        font=("Arial", 32), 
-        activebackground="green"
-    )
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 32), activebackground="green")
     joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
@@ -144,6 +132,7 @@ for joint in joints:
         col = 0
         row += 1
 
+# Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
 for i in range(2):
@@ -157,39 +146,37 @@ def update_button_colors():
     for button, joint in zip(joint_buttons, joints):
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
+    for button, tab in zip(tab_buttons, tabs):
+        button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
+
 def update_visibility():
     global button_tank_frame
-
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
-
         try:
             button_tank_frame.place_forget()
         except NameError:
             pass
-
     else:
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=600, height=560)
-
-        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50), activebackground="green")
+        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
-
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=500, y=0, width=100, height=560)
 
+# Set initial button colors and visibility
 update_button_colors()
 update_visibility()
 
+# Start the main loop
 root.mainloop()
