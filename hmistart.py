@@ -44,10 +44,10 @@ status_frame = tk.Frame(root)
 status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 # Adjusted width and font size for the status labels
-mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 14), relief="solid", width=7)
+mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 22), relief="solid", width=7)
 mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 14), relief="solid", width=14)
+joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 22), relief="solid", width=14)
 joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
@@ -95,7 +95,7 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = ["Mode 1", "Mode 2", "Mode 3"]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15)
+    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15, font=("Arial", 18))
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
@@ -110,7 +110,7 @@ for tab in tabs:
         tab_frame, 
         text=tab, 
         command=lambda t=tab: switch_tab(t), 
-        font=("Arial", 16)  # Modify the font size here
+        font=("Arial", 24)  # Modify the font size here
     )
     tab_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
@@ -119,7 +119,7 @@ joint_buttons = []
 joints = ["Left Knee", "Left Ankle", "Right Knee", "Right Ankle"]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 18))
+    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 32))
     joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1
