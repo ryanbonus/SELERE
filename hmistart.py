@@ -171,11 +171,11 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=600, height=560)
+        button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
-        blank_tank.place(x=500, y=0, width=100, height=560)
+        blank_tank.place(x=550, y=0, width=100, height=560)
 
 # Set initial button colors and visibility
 update_button_colors()
