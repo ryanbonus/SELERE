@@ -95,6 +95,9 @@ class UserInterface:
         self.intensity = 0
         self.height = 0
 
+    def processEvents():
+        
+
 
 
 # Exoskeleton Class containing modes and motors
