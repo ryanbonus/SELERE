@@ -105,6 +105,13 @@ class Exoskeleton:
         self.kneeMotor = KneeMotor(canbus)
         self.ankleMotor = AnkleMotor()
         self.userInterface = UserInterface()
+    
+    def __init__(self, canbus, userInterface):
+        self.modes = ["Mode 1", "Mode 2", "Mode 3"]
+        self.currentMode = self.modes[0]
+        self.kneeMotor = KneeMotor(canbus)
+        self.ankleMotor = AnkleMotor()
+        self.userInterface = userInterface
 
     def nextMode(self):
         current_index = self.modes.index(self.currentMode)

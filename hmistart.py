@@ -1,10 +1,12 @@
 import tkinter as tk
 from tkinter import ttk
+from classes import UserInterface
 
 # Initialize main window
 root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
+ui = UserInterface()
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -17,6 +19,7 @@ def set_mode(mode):
         selected_mode.set(mode)
         update_button_colors()
         print(f"Mode set to: {mode}")
+        ui.mode = int(mode[5])
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
@@ -30,10 +33,16 @@ def control_joint(joint):
         selected_joint.set(joint)
         update_button_colors()
         print(f"Controlling {joint}")
+        ui.joint = joint
 
 # Function for Start button
-def start_button_action():
+def start_button_pressed():
     print("Start button clicked")
+    ui.startbutton = True
+
+def start_button_released():
+    print("Start button released")
+    ui.startbutton = False
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)
@@ -47,10 +56,10 @@ status_frame = tk.Frame(root)
 status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 # Adjusted width and font size for the status labels
-mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 30), relief="solid", width=7)
+mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 28), relief="solid", width=7)
 mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 30), relief="solid", width=14)
+joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 28), relief="solid", width=14)
 joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
@@ -176,8 +185,10 @@ def update_visibility():
         slider_frame.place_forget()
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
-        start_button = tk.Button(button_tank_frame, text="Start", command=start_button_action, height=6, width=10, font=("Arial", 50))
+        start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
+        start_button.bind("<ButtonPress", start_button_pressed)
+        start_button.bind("<ButtonRelease", start_button_released)        
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
 
