@@ -139,35 +139,8 @@ class Exoskeleton:
         # In Mode 3: Extend and retract the ankle, with resisting torque
         elif self.currentMode == "Mode 3":
             self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
-.78
  
-# Function to start the Exoskeleton and its loop in a separate thread
-def start_exoskeleton(canbus):
-    exo = Exoskeleton(canbus)
 
-    while True:
-        command = input("Enter command (mode, button1, button2, button3, quit): ").strip().lower()
-
-        if command == "mode":
-            exo.userInterface.press_mode_button()
-            exo.nextMode()
-            exo.userInterface.release_mode_button()
-        elif command == "button1":
-            exo.userInterface.press_button1()
-            exo.handle_knee_motor()  # Button1 controls Knee Motor
-            exo.userInterface.release_button1()
-        elif command == "button2": 
-            exo.userInterface.press_button2()
-            exo.handle_ankle_motor()  # Button2 controls Ankle Motor
-            exo.userInterface.release_button2()
-        elif command == "button3":
-            exo.userInterface.press_button3()
-            exo.userInterface.release_button3()
-        elif command == "quit":
-            print("Exiting...")
-            break
-        else:
-            print("Invalid command.")
 
 # Run the program
 kneeMotor.motorCAN.start_can(start_exoskeleton)
