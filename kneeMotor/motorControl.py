@@ -3,7 +3,7 @@ from kneeMotor.motorCAN import comm_can_transmit_eid
 
 #Motor parameters
 BITRATE = 500000
-CONTROLLER_ID = 1
+CONTROLLER_ID = 0
 
 # CAN packet definitions
 CAN_PACKET_SET_DUTY = 0

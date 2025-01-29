@@ -18,7 +18,7 @@ class KneeMotor:
         #self.rangeOfMotionBottom = rangeOfMotionBottom
         self.speed = desiredSpeed
         self.acceleration = desiredAcceleration
-        print("Extending Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
+        kneeMotor.motorCAN.write_log("Extending Knee: Range [{}-{}], desiredSpeed {}, desiredAcceleration {}".format(
             desiredPosition, rangeOfMotionTop, desiredSpeed, desiredAcceleration))
         kneeMotor.motorControl.position_speed_acceleration(self.canbus, self.rangeOfMotionTop-desiredPosition, desiredSpeed, desiredAcceleration)
         self.position = desiredPosition
