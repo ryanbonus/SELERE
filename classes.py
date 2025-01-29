@@ -89,38 +89,12 @@ class AnkleMotor:
 # Class for User Interface
 class UserInterface:
     def __init__(self):
-        self.modeButton = False
-        self.button1 = False
-        self.button2 = False
-        self.button3 = False
-        self.button3_state = 0
-        self.button3_states = [0, 1, 2, 3]  # Example states for button3
+        self.startbutton = False
+        self.mode = 1
+        self.joint = "rightknee"
+        self.intensity = 0
+        self.height = 0
 
-    def press_mode_button(self):
-        self.modeButton = True
-
-    def release_mode_button(self):
-        self.modeButton = False
-
-    def press_button1(self):
-        self.button1 = True
-
-    def release_button1(self):
-        self.button1 = False
-
-    def press_button2(self):
-        self.button2 = True
-
-    def release_button2(self):
-        self.button2 = False
-
-    def press_button3(self):
-        self.button3 = True
-        self.button3_state = (self.button3_state + 1) % len(self.button3_states)
-        print("Button3 State Changed to:", self.button3_state)
-
-    def release_button3(self):
-        self.button3 = False
 
 
 # Exoskeleton Class containing modes and motors
