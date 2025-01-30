@@ -1,7 +1,7 @@
-import threading
 import time
 import kneeMotor.motorCAN
 import kneeMotor.motorControl
+
 # Class for Knee Motor
 class KneeMotor:
     def __init__(self, canbus):
@@ -41,7 +41,6 @@ class KneeMotor:
         kneeMotor.motorControl.current(self.canbus, torque)
         kneeMotor.motorCAN.write_log("Assisting Knee with Torque:" + torque, log_dir="logs")
      
-
     def resist(self, torque):
         self.torque = torque
         kneeMotor.motorControl.current(self.canbus, torque)
@@ -83,43 +82,16 @@ class AnkleMotor:
 
     def resist(self, torque):
         self.torque = torque
-        print("Resisting Ankle with Torque:", torque)
-
-
-# Class for User Interface
-class UserInterface:
-    def __init__(self):
-        self.startbutton = False
-        self.mode = 1
-        self.joint = "rightknee"
-        self.intensity = 0
-        self.height = 0
-
-    def processEvents():
+        print("Resisting Ankle with Torque:", torque)     
         
-
-
 
 # Exoskeleton Class containing modes and motors
 class Exoskeleton:
     def __init__(self, canbus):
-        self.modes = ["Mode 1", "Mode 2", "Mode 3"]
+        self.modes = [1,2,3]
         self.currentMode = self.modes[0]
         self.kneeMotor = KneeMotor(canbus)
         self.ankleMotor = AnkleMotor()
-        self.userInterface = UserInterface()
-    
-    def __init__(self, canbus, userInterface):
-        self.modes = ["Mode 1", "Mode 2", "Mode 3"]
-        self.currentMode = self.modes[0]
-        self.kneeMotor = KneeMotor(canbus)
-        self.ankleMotor = AnkleMotor()
-        self.userInterface = userInterface
-
-    def nextMode(self):
-        current_index = self.modes.index(self.currentMode)
-        self.currentMode = self.modes[(current_index + 1) % len(self.modes)]
-        print("Switched to", self.currentMode)
 
     def handle_knee_motor(self):
         if self.currentMode == "Mode 1":
@@ -144,6 +116,3 @@ class Exoskeleton:
             self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
  
 
-
-# Run the program
-kneeMotor.motorCAN.start_can(start_exoskeleton)

@@ -1,12 +1,14 @@
 import tkinter as tk
 from tkinter import ttk
-from classes import UserInterface
+from classes import Exoskeleton
 
 # Initialize main window
 root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
-ui = UserInterface()
+exo = Exoskeleton()
+leftKnee = exo.kneeMotor
+leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -19,7 +21,8 @@ def set_mode(mode):
         selected_mode.set(mode)
         update_button_colors()
         print(f"Mode set to: {mode}")
-        ui.mode = int(mode[5])
+        if mode in exo.modes:
+            exo.currentMode = int(mode[5])
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
