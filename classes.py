@@ -88,31 +88,24 @@ class AnkleMotor:
 # Exoskeleton Class containing modes and motors
 class Exoskeleton:
     def __init__(self, canbus):
-        self.modes = [1,2,3]
+        self.modeFA = Mode("Full Assistance", 1)
+        self.modePA = Mode("Partial Assistance", 2)
+        self.modePR = Mode("Partial Resistance", 3)
+        self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.kneeMotor = KneeMotor(canbus)
-        self.ankleMotor = AnkleMotor()
+        self.bus = canbus
+        self.leftKnee = KneeMotor(self.Bus)
+        self.leftAnkle = AnkleMotor(self.Bus)
+        self.joints = (self.leftKnee, self.leftAnkle)
+        self.currentJoint = self.joints[0]
+        self.states = ("stoppped", "started")
+        self.currentState = self.states[0]
 
-    def handle_knee_motor(self):
-        if self.currentMode == "Mode 1":
-            self.kneeMotor.extend(100, 0, self.userInterface.button3_state*1000, 5000)
-            self.kneeMotor.retract(100, 0, self.userInterface.button3_state*1000, 5000)
-        # In Mode 2: Extend and retract the knee, with assisting torque
-        elif self.currentMode == "Mode 2":
-            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
-        # In Mode 3: Extend and retract the knee, with resisting torque
-        elif self.currentMode == "Mode 3":
-            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
-    
-    def handle_ankle_motor(self):
-        if self.currentMode == "Mode 1":
-            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
-        # In Mode 2: Extend and retract the ankle, with assisting torque
-        elif self.currentMode == "Mode 2":
-            self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
-        # In Mode 3: Extend and retract the ankle, with resisting torque
-        elif self.currentMode == "Mode 3":
-            self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
+class Mode:
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
+        self.height = (0,1) #format (minHeight, maxHeight)
+
  
 
