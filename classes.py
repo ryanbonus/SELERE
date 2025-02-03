@@ -101,6 +101,21 @@ class Exoskeleton:
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]
 
+    def __init__(self):
+        self.modeFA = Mode("Full Assistance", 1)
+        self.modePA = Mode("Partial Assistance", 2)
+        self.modePR = Mode("Partial Resistance", 3)
+        self.modes = (self.modeFA, self.modePA, self.modePR)
+        self.currentMode = self.modes[0]
+        self.leftKnee = KneeMotor(self.Bus)
+        self.leftAnkle = AnkleMotor(self.Bus)
+        self.joints = (self.leftKnee, self.leftAnkle)
+        self.currentJoint = self.joints[0]
+        self.states = ("stoppped", "started")
+        self.currentState = self.states[0]
+
+
+
 class Mode:
     def __init__(self, name, number):
         self.name = name
