@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
+from kneeMotor.motorCAN import start_can
 
 # Initialize main window
 root = tk.Tk()
@@ -117,7 +118,7 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = [exo.modeFA, exo.modePA, exo.modePR]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
+    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
@@ -203,4 +204,4 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-root.mainloop()
+start_can(root.mainloop)
