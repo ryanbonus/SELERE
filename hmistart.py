@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
-from kneeMotor.motorCAN import start_can
+from kneeMotor.motorCAN import start_can, tkinter_loop
 
 # Initialize main window
 root = tk.Tk()
@@ -204,4 +204,5 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-start_can(root.mainloop)
+components = [leftKnee, leftAnkle]
+tkinter_loop(root.mainloop())

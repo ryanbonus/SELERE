@@ -59,6 +59,11 @@ def demo_event_loop(canBus):
         userInput=input("enter position")
         #Do something
 
+def tkinter_loop(components, canBus, tkLoop):
+    for component in components:
+        component.canbus = canBus
+    start_can(tkLoop)
+
 def start_can(eventLoop):
     try:
         # Set up the CAN interface with the specified bitrate, This must match the Baud Rate parameter set in R-link
