@@ -204,4 +204,4 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-start_can(root.mainloop)
+root.mainloop()
