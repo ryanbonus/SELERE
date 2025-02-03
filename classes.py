@@ -111,9 +111,9 @@ class Exoskeleton:
         self.currentState = self.states[0]
 
     def __init__(self):
-        self.modeFA = Mode(name = "Full Assistance", number = 1)
-        self.modePA = Mode(name = "Partial Assistance", number = 2)
-        self.modePR = Mode(name = "Partial Resistance", number = 3)
+        self.modeFA = Mode("Full Assistance", 1)
+        self.modePA = Mode("Partial Assistance", 2)
+        self.modePR = Mode("Partial Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.canbus = 0
@@ -127,7 +127,7 @@ class Exoskeleton:
 
 
 class Mode:
-    def __init__(name, number, self):
+    def __init__(self, name, number):
         self.name = name
         self.number = number
         self.height = (0,1) #format (minHeight, maxHeight)

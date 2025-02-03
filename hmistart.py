@@ -8,8 +8,6 @@ root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
 exo = Exoskeleton()
-leftKnee = exo.kneeMotor
-leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -204,5 +202,5 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-components = [leftKnee, leftAnkle]
+components = [exo.leftKnee, exo.leftAnkle]
 tkinter_loop(root.mainloop())
