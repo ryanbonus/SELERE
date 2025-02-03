@@ -20,6 +20,7 @@ class KneeMotor:
         self.torque = 0
         self.rangeOfMotionTop = 45
         self.rangeOfMotionBottom = 0
+        self.canbus = 0
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -101,7 +102,7 @@ class Exoskeleton:
         self.modePR = Mode("Partial Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.bus = canbus
+        self.canbus = canbus
         self.leftKnee = KneeMotor(self.Bus)
         self.leftAnkle = AnkleMotor(self.Bus)
         self.joints = (self.leftKnee, self.leftAnkle)
@@ -115,6 +116,7 @@ class Exoskeleton:
         self.modePR = Mode("Partial Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
+        self.canbus = 0
         self.leftKnee = KneeMotor()
         self.leftAnkle = AnkleMotor()
         self.joints = (self.leftKnee, self.leftAnkle)
@@ -125,7 +127,7 @@ class Exoskeleton:
 
 
 class Mode:
-    def __init__(self, name, number):
+    def __init__(name, number, self):
         self.name = name
         self.number = number
         self.height = (0,1) #format (minHeight, maxHeight)
