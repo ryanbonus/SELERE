@@ -62,9 +62,9 @@ def demo_event_loop(canBus):
 def tkinter_loop(components, canBus, tkLoop):
     for component in components:
         component.canbus = canBus
-    start_can(tkLoop)
+    tkLoop()
 
-def start_can(eventLoop):
+def start_can(components, eventLoop, event):
     try:
         # Set up the CAN interface with the specified bitrate, This must match the Baud Rate parameter set in R-link
         write_log("Setting bitrate for can0...")
@@ -83,7 +83,7 @@ def start_can(eventLoop):
         # Start the receiver thread
         receiver_thread.start()
         # CALL MAIN EVENT LOOP BELOW, MUST BE A FUNCTION WITH A CONSTANT LOOP & EXPECTING A PARAMETER 'canbus'
-        eventLoop(canbus = can0)
+        eventLoop(components, can0, event)
 
     except Exception as e:
         print(f"An error occurred: {e}")

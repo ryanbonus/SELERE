@@ -2,6 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop
+from kneeMotor.motorControl import current
 
 # Initialize main window
 root = tk.Tk()
@@ -44,13 +45,15 @@ def control_joint(joint):
             print(f"Joint {joint} does not exist")
 
 # Function for Start button
-def start_button_pressed():
+def start_button_pressed(*args):
     print("Start button clicked")
     exo.currentState = exo.states[1]
+    current(exo.leftKnee.canbus, 1)
 
-def start_button_released():
+def start_button_released(*args):
     print("Start button released")
     exo.currentState = exo.states[0]
+    current(exo.leftKnee.canbus, 0)
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)
@@ -192,8 +195,8 @@ def update_visibility():
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
-        start_button.bind("<ButtonPress", start_button_pressed)
-        start_button.bind("<ButtonRelease", start_button_released)        
+        start_button.bind("<ButtonPress>", start_button_pressed)
+        start_button.bind("<ButtonRelease>", start_button_released)        
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
 
@@ -203,4 +206,4 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.leftAnkle]
-tkinter_loop(root.mainloop())
+start_can(components, tkinter_loop, root.mainloop)
