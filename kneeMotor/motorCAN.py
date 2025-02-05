@@ -6,7 +6,7 @@ import threading
 
 #Motor parameters
 BITRATE = 500000
-LOGGING_DELAY = 1 #In seconds, used to add a delay between logs so that redundant status updates don't clog the log and create a huge file. Todo, create a function that only allows unique logs to be written to file. Make that function append a time range to the previous log for clarity.
+LOGGING_DELAY = 60 #In seconds, used to add a delay between logs so that redundant status updates don't clog the log and create a huge file. Todo, create a function that only allows unique logs to be written to file. Make that function append a time range to the previous log for clarity.
 
 def write_log(log_text, log_dir="logs"):
     #print(log_text)  #for live debugging
