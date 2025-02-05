@@ -170,7 +170,19 @@ def update_button_colors():
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
 # Declare max_intensity_value globally
+# Declare max_intensity_value globally
 max_intensity_value = None
+
+def update_max_intensity(change):
+    global max_intensity_value  # Reference the global variable
+    # Get the current value from the label, adjust by change, and update it
+    current_value = int(max_intensity_value.cget("text"))  # Get current value from the label
+    new_value = current_value + change
+    # Ensure the value doesn't go below 0
+    if new_value < 0:
+        new_value = 0
+    # Update the label text with the new value
+    max_intensity_value.config(text=str(new_value))
 
 def create_intensity_buttons():
     global max_intensity_value  # Make sure to reference the global variable
@@ -213,10 +225,6 @@ def create_intensity_buttons():
     intensity_button_frame.grid_columnconfigure(2, weight=2)
     intensity_button_frame.grid_columnconfigure(3, weight=1)
     intensity_button_frame.grid_columnconfigure(4, weight=1)
-
-
-
-
 
 def update_visibility():
     global max_intensity_value  # Ensure we reference the global variable
