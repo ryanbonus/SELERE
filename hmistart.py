@@ -154,7 +154,12 @@ for joint in joints:
     if col > 1:
         col = 0
         row += 1
-
+# Function to switch tabs
+def switch_tab(tab):
+    if selected_tab.get() != tab:  # Only change if it's different
+        selected_tab.set(tab)
+        update_visibility()
+        print(f"Switched to {tab} tab")
 # Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
@@ -171,6 +176,34 @@ def update_button_colors():
 
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
+
+# Create the 2x2 grid frame for the DOC tab
+doc_grid_frame = tk.Frame(root, bg="lightgray")
+
+def create_labeled_box(parent, text, default_value, row, col):
+    frame = tk.Frame(parent, bd=2, relief="solid")
+    frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+    
+    # Label on top of the box
+    label = tk.Label(frame, text=text, font=("Arial", 14))
+    label.pack(side="top")
+    
+    # Number in the box, centered
+    value_label = tk.Label(frame, text=str(default_value), font=("Arial", 14))
+    value_label.pack(side="top", padx=5, pady=10)  # Adjust padding as needed
+    
+    return value_label
+
+# Create the 2x2 labeled boxes
+max_intensity_label = create_labeled_box(doc_grid_frame, "Maximum Intensity", 100, 0, 0)
+min_intensity_label = create_labeled_box(doc_grid_frame, "Minimum Intensity", 0, 1, 0)
+max_height_label = create_labeled_box(doc_grid_frame, "Maximum Height", 100, 0, 1)
+min_height_label = create_labeled_box(doc_grid_frame, "Minimum Height", 0, 1, 1)
+
+for i in range(2):
+    doc_grid_frame.grid_rowconfigure(i, weight=1)
+    doc_grid_frame.grid_columnconfigure(i, weight=1)
+
 
 def update_visibility():
     global button_tank_frame, start_button, blank_tank
@@ -190,10 +223,12 @@ def update_visibility():
     elif selected_tab.get() == "DOC":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
+        doc_grid_frame.place(relx=0.05, rely=0.6, relwidth=0.25, relheight=0.3)  # <-- Add this line
         try:
-            button_tank_frame.place_forget()
+         button_tank_frame.place_forget()
         except NameError:
-            pass
+         pass
+
     else:
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
