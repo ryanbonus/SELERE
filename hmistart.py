@@ -1,12 +1,15 @@
 import tkinter as tk
 from tkinter import ttk
-from classes import UserInterface
+from classes import Exoskeleton
+from kneeMotor.motorCAN import start_can
 
 # Initialize main window
 root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
-ui = UserInterface()
+exo = Exoskeleton()
+#leftKnee = exo.kneeMotor
+#leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -15,11 +18,14 @@ selected_tab = tk.StringVar(value="Edit")
 
 # Function placeholders for button actions
 def set_mode(mode):
-    if selected_mode.get() != mode:  # Only change if it's different
+    if exo.currentMode.number != mode:  # Only change if it's different
         selected_mode.set(mode)
         update_button_colors()
-        print(f"Mode set to: {mode}")
-        ui.mode = int(mode[5])
+        if mode in exo.modes:
+            print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
+            exo.currentMode = exo.modes[mode-1] 
+        else:
+            print(f"Mode {mode} does not exist")
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
@@ -28,21 +34,25 @@ def switch_tab(tab):
         update_visibility()
         print(f"Switched to {tab} tab")
 
+
 def control_joint(joint):
     if selected_joint.get() != joint:  # Only change if it's different
         selected_joint.set(joint)
         update_button_colors()
         print(f"Controlling {joint}")
-        ui.joint = joint
+        if joint in exo.joints:
+            exo.currentJoint = joint
+        else:
+            print(f"Joint {joint} does not exist")
 
 # Function for Start button
 def start_button_pressed():
     print("Start button clicked")
-    ui.startbutton = True
+    exo.currentState = exo.states[1]
 
 def start_button_released():
     print("Start button released")
-    ui.startbutton = False
+    exo.currentState = exo.states[0]
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)
@@ -80,9 +90,6 @@ def update_intensity(val):
 def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
     
-    
-
-
 # Intensity tank
 intensity_label = tk.Label(slider_frame, text="Intensity")
 intensity_label.grid(row=0, column=0, padx=5, pady=5)
@@ -109,9 +116,9 @@ slider_frame.grid_rowconfigure(1, weight=1)
 
 # Mode buttons
 mode_buttons = []
-modes = ["Mode 1", "Mode 2", "Mode 3"]
+modes = [exo.modeFA, exo.modePA, exo.modePR]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode, command=lambda m=mode: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
+    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
@@ -166,7 +173,7 @@ def update_button_colors():
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
 
 def update_visibility():
-    global button_tank_frame
+    global button_tank_frame, start_button, blank_tank
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
@@ -176,6 +183,13 @@ def update_visibility():
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass
+    elif selected_tab.get() == "DOC":
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        slider_frame.place_forget()
         try:
             button_tank_frame.place_forget()
         except NameError:

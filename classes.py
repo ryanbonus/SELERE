@@ -1,7 +1,7 @@
-import threading
 import time
 import kneeMotor.motorCAN
 import kneeMotor.motorControl
+
 # Class for Knee Motor
 class KneeMotor:
     def __init__(self, canbus):
@@ -12,6 +12,14 @@ class KneeMotor:
         self.rangeOfMotionTop = 45
         self.rangeOfMotionBottom = 0
         self.canbus = canbus
+
+    def __init__(self):
+        self.position = 0
+        self.speed = 0
+        self.acceleration = 0
+        self.torque = 0
+        self.rangeOfMotionTop = 45
+        self.rangeOfMotionBottom = 0
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -41,7 +49,6 @@ class KneeMotor:
         kneeMotor.motorControl.current(self.canbus, torque)
         kneeMotor.motorCAN.write_log("Assisting Knee with Torque:" + torque, log_dir="logs")
      
-
     def resist(self, torque):
         self.torque = torque
         kneeMotor.motorControl.current(self.canbus, torque)
@@ -83,64 +90,45 @@ class AnkleMotor:
 
     def resist(self, torque):
         self.torque = torque
-        print("Resisting Ankle with Torque:", torque)
-
-
-# Class for User Interface
-class UserInterface:
-    def __init__(self):
-        self.startbutton = False
-        self.mode = 1
-        self.joint = "rightknee"
-        self.intensity = 0
-        self.height = 0
-
-
+        print("Resisting Ankle with Torque:", torque)     
+        
 
 # Exoskeleton Class containing modes and motors
 class Exoskeleton:
     def __init__(self, canbus):
-        self.modes = ["Mode 1", "Mode 2", "Mode 3"]
+        self.modeFA = Mode("Full Assistance", 1)
+        self.modePA = Mode("Partial Assistance", 2)
+        self.modePR = Mode("Partial Resistance", 3)
+        self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.kneeMotor = KneeMotor(canbus)
-        self.ankleMotor = AnkleMotor()
-        self.userInterface = UserInterface()
-    
-    def __init__(self, canbus, userInterface):
-        self.modes = ["Mode 1", "Mode 2", "Mode 3"]
+        self.bus = canbus
+        self.leftKnee = KneeMotor(self.Bus)
+        self.leftAnkle = AnkleMotor(self.Bus)
+        self.joints = (self.leftKnee, self.leftAnkle)
+        self.currentJoint = self.joints[0]
+        self.states = ("stoppped", "started")
+        self.currentState = self.states[0]
+
+    def __init__(self):
+        self.modeFA = Mode("Full Assistance", 1)
+        self.modePA = Mode("Partial Assistance", 2)
+        self.modePR = Mode("Partial Resistance", 3)
+        self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.kneeMotor = KneeMotor(canbus)
-        self.ankleMotor = AnkleMotor()
-        self.userInterface = userInterface
+        self.leftKnee = KneeMotor()
+        self.leftAnkle = AnkleMotor()
+        self.joints = (self.leftKnee, self.leftAnkle)
+        self.currentJoint = self.joints[0]
+        self.states = ("stoppped", "started")
+        self.currentState = self.states[0]
 
-    def nextMode(self):
-        current_index = self.modes.index(self.currentMode)
-        self.currentMode = self.modes[(current_index + 1) % len(self.modes)]
-        print("Switched to", self.currentMode)
 
-    def handle_knee_motor(self):
-        if self.currentMode == "Mode 1":
-            self.kneeMotor.extend(100, 0, self.userInterface.button3_state*1000, 5000)
-            self.kneeMotor.retract(100, 0, self.userInterface.button3_state*1000, 5000)
-        # In Mode 2: Extend and retract the knee, with assisting torque
-        elif self.currentMode == "Mode 2":
-            self.kneeMotor.assist(self.userInterface.button3_state)  # Assist with torque
-        # In Mode 3: Extend and retract the knee, with resisting torque
-        elif self.currentMode == "Mode 3":
-            self.kneeMotor.resist(self.userInterface.button3_state)  # Resist with torque
-    
-    def handle_ankle_motor(self):
-        if self.currentMode == "Mode 1":
-            self.ankleMotor.extend(100, 0, self.userInterface.button3_state, 5)
-            self.ankleMotor.retract(100, 0, self.userInterface.button3_state, 5)
-        # In Mode 2: Extend and retract the ankle, with assisting torque
-        elif self.currentMode == "Mode 2":
-            self.ankleMotor.assist(self.userInterface.button3_state)  # Assist with torque
-        # In Mode 3: Extend and retract the ankle, with resisting torque
-        elif self.currentMode == "Mode 3":
-            self.ankleMotor.resist(self.userInterface.button3_state)  # Resist with torque
+
+class Mode:
+    def __init__(self, name, number):
+        self.name = name
+        self.number = number
+        self.height = (0,1) #format (minHeight, maxHeight)
+
  
 
-
-# Run the program
-kneeMotor.motorCAN.start_can(start_exoskeleton)
