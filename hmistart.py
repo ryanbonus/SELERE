@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop
-from kneeMotor.motorControl import current
+from kneeMotor.motorControl import current, set_origin
 
 # Initialize main window
 root = tk.Tk()
@@ -49,11 +49,14 @@ def start_button_pressed(*args):
     print("Start button clicked")
     exo.currentState = exo.states[1]
     current(exo.leftKnee.canbus, 1)
+    set_origin(exo.leftKnee.canbus, 0)
 
 def start_button_released(*args):
     print("Start button released")
     exo.currentState = exo.states[0]
     current(exo.leftKnee.canbus, 0)
+    set_origin(exo.leftKnee.canbus, 0)
+    
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)

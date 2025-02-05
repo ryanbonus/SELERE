@@ -53,9 +53,9 @@ def current_brake(bus, current, controller_id=CONTROLLER_ID):
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT_BRAKE) << 8)
     comm_can_transmit_eid(bus, eid, buffer)
 
-    def set_origin(controller_id: int, set_origin_mode: int):
-        mode_index = 0
-        buffer = bytearray(0)
-        buffer_append(1, buffer, set_origin_mode, mode_index)
-        eid = (controller_id | int(CAN_PACKET_SET_ORIGIN_HERE) << 8)
-        comm_can_transmit_eid(bus, eid, buffer)  
+def set_origin(set_origin_mode: int, controller_id=CONTROLLER_ID):
+    mode_index = 0
+    buffer = bytearray(0)
+    buffer_append(1, buffer, set_origin_mode, mode_index)
+    eid = (controller_id | int(CAN_PACKET_SET_ORIGIN_HERE) << 8)
+    comm_can_transmit_eid(bus, eid, buffer)  
