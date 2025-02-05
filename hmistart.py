@@ -7,9 +7,7 @@ from kneeMotor.motorCAN import start_can
 root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
-exo = Exoskeleton()
-#leftKnee = exo.kneeMotor
-#leftAnkle = exo.ankleMotor
+ui = UserInterface()
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
