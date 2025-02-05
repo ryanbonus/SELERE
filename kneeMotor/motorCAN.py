@@ -26,7 +26,7 @@ def write_log(log_text, log_dir="logs"):
     with open(log_filename, "a") as log_file:
         log_file.write(log_entry + "\n")
 
-def can_handler_thread(bus):
+def can_handler_thread(bus, components):
     #Continuously receive CAN messages and write them to log files
     while True:
         msg = bus.recv()  # Wait for a new message
