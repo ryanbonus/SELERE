@@ -8,8 +8,6 @@ root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
 exo = Exoskeleton()
-#leftKnee = exo.kneeMotor
-#leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -80,7 +78,7 @@ joint_frame = tk.Frame(root)
 joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
 # Tank-style sliders
-slider_heights = (0, 650) #Change these values to modify the min and max values of the height and intensity sliders
+slider_heights = (0, 650)  # Change these values to modify the min and max values of the height and intensity sliders
 slider_widths = (0, 50)
 
 
@@ -154,12 +152,7 @@ for joint in joints:
     if col > 1:
         col = 0
         row += 1
-# Function to switch tabs
-def switch_tab(tab):
-    if selected_tab.get() != tab:  # Only change if it's different
-        selected_tab.set(tab)
-        update_visibility()
-        print(f"Switched to {tab} tab")
+
 # Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
@@ -176,37 +169,58 @@ def update_button_colors():
 
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
+# Declare max_intensity_value globally
+max_intensity_value = None
 
-# Create the 2x2 grid frame for the DOC tab
-doc_grid_frame = tk.Frame(root, bg="lightgray")
-
-def create_labeled_box(parent, text, default_value, row, col):
-    frame = tk.Frame(parent, bd=2, relief="solid")
-    frame.grid(row=row, column=col, padx=5, pady=5, sticky="nsew")
+def create_intensity_buttons():
+    global max_intensity_value  # Make sure to reference the global variable
     
-    # Label on top of the box
-    label = tk.Label(frame, text=text, font=("Arial", 14))
-    label.pack(side="top")
-    
-    # Number in the box, centered
-    value_label = tk.Label(frame, text=str(default_value), font=("Arial", 14))
-    value_label.pack(side="top", padx=5, pady=10)  # Adjust padding as needed
-    
-    return value_label
+    # Create a frame to hold the buttons and box, shift everything to the left
+    intensity_button_frame = tk.Frame(root)
+    intensity_button_frame.place(relx=0.03, rely=0.45, anchor="w")  # Shift further left
 
-# Create the 2x2 labeled boxes
-max_intensity_label = create_labeled_box(doc_grid_frame, "Maximum Intensity", 100, 0, 0)
-min_intensity_label = create_labeled_box(doc_grid_frame, "Minimum Intensity", 0, 1, 0)
-max_height_label = create_labeled_box(doc_grid_frame, "Maximum Height", 100, 0, 1)
-min_height_label = create_labeled_box(doc_grid_frame, "Minimum Height", 0, 1, 1)
+    # Buttons for the left side (-1, -5, -15)
+    button_subtract_1 = tk.Button(intensity_button_frame, text="-1", font=("Arial", 12), command=lambda: update_max_intensity(-1))
+    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
+    
+    button_subtract_5 = tk.Button(intensity_button_frame, text="-5", font=("Arial", 12), command=lambda: update_max_intensity(-5))
+    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
+    
+    button_subtract_15 = tk.Button(intensity_button_frame, text="-15", font=("Arial", 12), command=lambda: update_max_intensity(-15))
+    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
 
-for i in range(2):
-    doc_grid_frame.grid_rowconfigure(i, weight=1)
-    doc_grid_frame.grid_columnconfigure(i, weight=1)
+    # Create the max intensity label above the value box
+    max_intensity_label = tk.Label(intensity_button_frame, text="Maximum Intensity", font=("Arial", 14))
+    max_intensity_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    # Create the value box to show the intensity number in the middle
+    max_intensity_value = tk.Label(intensity_button_frame, text="100", font=("Arial", 14), relief="solid", width=10, height=2)
+    max_intensity_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    # Buttons for the right side (+1, +5, +15)
+    button_add_1 = tk.Button(intensity_button_frame, text="+1", font=("Arial", 12), command=lambda: update_max_intensity(1))
+    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
+    
+    button_add_5 = tk.Button(intensity_button_frame, text="+5", font=("Arial", 12), command=lambda: update_max_intensity(5))
+    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
+    
+    button_add_15 = tk.Button(intensity_button_frame, text="+15", font=("Arial", 12), command=lambda: update_max_intensity(15))
+    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
+    
+    # Adjust column weights to create spacing
+    intensity_button_frame.grid_columnconfigure(0, weight=1)
+    intensity_button_frame.grid_columnconfigure(1, weight=2)
+    intensity_button_frame.grid_columnconfigure(2, weight=2)
+    intensity_button_frame.grid_columnconfigure(3, weight=1)
+    intensity_button_frame.grid_columnconfigure(4, weight=1)
+
+
+
 
 
 def update_visibility():
-    global button_tank_frame, start_button, blank_tank
+    global max_intensity_value  # Ensure we reference the global variable
+    
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
@@ -223,12 +237,21 @@ def update_visibility():
     elif selected_tab.get() == "DOC":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-        doc_grid_frame.place(relx=0.05, rely=0.6, relwidth=0.25, relheight=0.3)  # <-- Add this line
-        try:
-         button_tank_frame.place_forget()
-        except NameError:
-         pass
 
+        # Show maximum intensity box in DOC tab, move it to the bottom-left corner
+       # max_intensity_label = tk.Label(root, text="Maximum Intensity", font=("Arial", 14))
+       # max_intensity_label.place(relx=0.12, rely=0.4, anchor="w")
+        
+        max_intensity_value = tk.Label(root, text="100", font=("Arial", 14), relief="solid", width=10, height=2)
+        max_intensity_value.place(relx=0.12, rely=0.45, anchor="w")
+        
+        # Create intensity buttons
+        create_intensity_buttons()
+
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass
     else:
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
