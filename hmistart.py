@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop
-from kneeMotor.motorControl import current, set_origin
+from kneeMotor.motorControl import current, set_origin, speed
 
 # Initialize main window
 root = tk.Tk()
@@ -48,13 +48,12 @@ def control_joint(joint):
 def start_button_pressed(*args):
     print("Start button clicked")
     exo.currentState = exo.states[1]
-    current(exo.leftKnee.canbus, 1)
-    set_origin(exo.leftKnee.canbus, 0)
+    speed(exo.leftKnee.canbus, 1250)
 
 def start_button_released(*args):
     print("Start button released")
     exo.currentState = exo.states[0]
-    current(exo.leftKnee.canbus, 0)
+    speed(exo.leftKnee.canbus, 0)
     set_origin(exo.leftKnee.canbus, 0)
     
 

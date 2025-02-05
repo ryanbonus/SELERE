@@ -44,7 +44,14 @@ def current(bus, current, controller_id=CONTROLLER_ID):
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(current*1000), current_index)
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)   
+    comm_can_transmit_eid(bus, eid, buffer)
+
+def speed(bus, rpm, controller_id=CONTROLLER_ID):
+    speed_index = 0
+    buffer = bytearray(0)
+    buffer_append_int32(buffer, np.int32(rpm), speed_index)
+    eid = (controller_id | int(CAN_PACKET_SET_RPM) << 8)
+    comm_can_transmit_eid(bus, eid, buffer)       
 
 def current_brake(bus, current, controller_id=CONTROLLER_ID):
     current_index = 0
@@ -53,7 +60,7 @@ def current_brake(bus, current, controller_id=CONTROLLER_ID):
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT_BRAKE) << 8)
     comm_can_transmit_eid(bus, eid, buffer)
 
-def set_origin(set_origin_mode: int, controller_id=CONTROLLER_ID):
+def set_origin(bus, set_origin_mode: int, controller_id=CONTROLLER_ID):
     mode_index = 0
     buffer = bytearray(0)
     buffer_append(1, buffer, set_origin_mode, mode_index)
