@@ -16,7 +16,9 @@ class KneeMotor:
     def __init__(self):
         self.position = 0
         self.speed = 0
-        self.acceleration = 0
+        self.current = 0
+        self.temp = 0
+        self.errorCode=0
         self.torque = 0
         self.rangeOfMotionTop = 45
         self.rangeOfMotionBottom = 0
