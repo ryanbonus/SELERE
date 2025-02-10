@@ -261,6 +261,94 @@ def create_min_intensity_buttons():
     button_add_15 = tk.Button(min_intensity_button_frame, text="+15", font=("Arial", 20), command=lambda: update_min_intensity(15))
     button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
 
+
+max_height_value = None
+
+def update_max_height(change):
+    global max_height_value  # Reference the global variable
+    current_value = int(max_height_value.cget("text"))  # Get current value from the label
+    new_value = current_value + change
+    # Ensure the value doesn't go below 0
+    if new_value < 0:
+        new_value = 0
+    # Update the label text with the new value
+    max_height_value.config(text=str(new_value))
+
+def create_max_height_buttons():
+    global max_height_value  # Make sure to reference the global variable
+    
+    # Create a frame to hold the buttons and box
+    height_button_frame = tk.Frame(root)
+    height_button_frame.place(relx=0.21, rely=0.45, anchor="w")  # Adjust position as needed
+
+    # Buttons for the left side (-1, -5, -15)
+    button_subtract_1 = tk.Button(height_button_frame, text="-1", font=("Arial", 20), command=lambda: update_max_height(-1))
+    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_5 = tk.Button(height_button_frame, text="-5", font=("Arial", 20), command=lambda: update_max_height(-5))
+    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_15 = tk.Button(height_button_frame, text="-15", font=("Arial", 20), command=lambda: update_max_height(-15))
+    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
+
+    # Create the max height label above the value box
+    max_height_label = tk.Label(height_button_frame, text="Maximum Height", font=("Arial", 20))
+    max_height_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    # Create the value box to show the height number
+    max_height_value = tk.Label(height_button_frame, text="100", font=("Arial", 20), relief="solid", width=10, height=2)
+    max_height_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    # Buttons for the right side (+1, +5, +15)
+    button_add_1 = tk.Button(height_button_frame, text="+1", font=("Arial", 20), command=lambda: update_max_height(1))
+    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_5 = tk.Button(height_button_frame, text="+5", font=("Arial", 20), command=lambda: update_max_height(5))
+    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_15 = tk.Button(height_button_frame, text="+15", font=("Arial", 20), command=lambda: update_max_height(15))
+    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
+
+# Minimum Height Functionality
+min_height_value = None
+
+def update_min_height(change):
+    global min_height_value
+    current_value = int(min_height_value.cget("text"))
+    new_value = current_value + change
+    if new_value < -10:
+        new_value = -10
+    min_height_value.config(text=str(new_value))
+
+def create_min_height_buttons():
+    global min_height_value
+    min_height_button_frame = tk.Frame(root)
+    min_height_button_frame.place(relx=0.21, rely=0.70, anchor="w")
+
+    button_subtract_1 = tk.Button(min_height_button_frame, text="-1", font=("Arial", 20), command=lambda: update_min_height(-1))
+    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_5 = tk.Button(min_height_button_frame, text="-5", font=("Arial", 20), command=lambda: update_min_height(-5))
+    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_15 = tk.Button(min_height_button_frame, text="-15", font=("Arial", 20), command=lambda: update_min_height(-15))
+    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
+
+    min_height_label = tk.Label(min_height_button_frame, text="Minimum Height", font=("Arial", 20))
+    min_height_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    min_height_value = tk.Label(min_height_button_frame, text="-10", font=("Arial", 20), relief="solid", width=10, height=2)
+    min_height_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    button_add_1 = tk.Button(min_height_button_frame, text="+1", font=("Arial", 20), command=lambda: update_min_height(1))
+    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_5 = tk.Button(min_height_button_frame, text="+5", font=("Arial", 20), command=lambda: update_min_height(5))
+    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_15 = tk.Button(min_height_button_frame, text="+15", font=("Arial", 20), command=lambda: update_min_height(15))
+    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
+
     
     # Adjust column weights to create spacing
     intensity_button_frame.grid_columnconfigure(0, weight=1)
@@ -293,6 +381,8 @@ def update_visibility():
         # Create intensity buttons
         create_max_intensity_buttons()
         create_min_intensity_buttons()
+        create_max_height_buttons()
+        create_min_height_buttons()
 
         try:
             button_tank_frame.place_forget()
