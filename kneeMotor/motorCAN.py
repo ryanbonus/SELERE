@@ -26,11 +26,21 @@ def write_log(log_text, log_dir="logs"):
     with open(log_filename, "a") as log_file:
         log_file.write(log_entry + "\n")
 
-def can_handler_thread(bus):
+def can_handler_thread(bus, jointMotors):
     #Continuously receive CAN messages and write them to log files
     while True:
         msg = bus.recv()  # Wait for a new message
+        
         if msg:
+            try:
+                jointMotors[0].position = int((msg[44:46]+msg[47:49]), 16)
+                jointMotors[0].speed = int((msg[50:52]+msg[53:55]), 16)
+                jointMotors[0].current = int((msg[56:58]+msg[59:61]), 16)
+                jointMotors[0].temp = int((msg[62:64]), 16)
+                jointMotors[0].errorCode = int((msg[65:67]), 16)
+            except Exception as e:
+                print(f"Error extracting parameter, message: {e}")
+
             write_log(msg)
             time.sleep(LOGGING_DELAY) # This magic number changes the logging frequency. 
 
@@ -59,12 +69,12 @@ def demo_event_loop(canBus):
         userInput=input("enter position")
         #Do something
 
-def tkinter_loop(components, canBus, tkLoop):
-    for component in components:
+def tkinter_loop(jointMotors, canBus, tkLoop):
+    for component in jointMotors:
         component.canbus = canBus
     tkLoop()
 
-def start_can(components, eventLoop, event):
+def start_can(jointMotors, eventLoop, event):
     try:
         # Set up the CAN interface with the specified bitrate, This must match the Baud Rate parameter set in R-link
         write_log("Setting bitrate for can0...")
@@ -79,11 +89,11 @@ def start_can(components, eventLoop, event):
         print("CAN bus initialized successfully.")
 
         # Create thread for receiving messages
-        receiver_thread = threading.Thread(target=can_handler_thread, args=(can0,), daemon=True)
+        receiver_thread = threading.Thread(target=can_handler_thread, args=(can0, jointMotors), daemon=True)
         # Start the receiver thread
         receiver_thread.start()
         # CALL MAIN EVENT LOOP BELOW, MUST BE A FUNCTION WITH A CONSTANT LOOP & EXPECTING A PARAMETER 'canbus'
-        eventLoop(components, can0, event)
+        eventLoop(jointMotors, can0, event)
 
     except Exception as e:
         print(f"An error occurred: {e}")
