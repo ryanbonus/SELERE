@@ -184,40 +184,83 @@ def update_max_intensity(change):
     # Update the label text with the new value
     max_intensity_value.config(text=str(new_value))
 
-def create_intensity_buttons():
+def create_max_intensity_buttons():
     global max_intensity_value  # Make sure to reference the global variable
     
     # Create a frame to hold the buttons and box, shift everything to the left
     intensity_button_frame = tk.Frame(root)
-    intensity_button_frame.place(relx=0.03, rely=0.45, anchor="w")  # Shift further left
+    intensity_button_frame.place(relx=0.01, rely=0.45, anchor="w")  # Shift further left
 
-    # Buttons for the left side (-1, -5, -15)
-    button_subtract_1 = tk.Button(intensity_button_frame, text="-1", font=("Arial", 12), command=lambda: update_max_intensity(-1))
+   # Buttons for the left side (-1, -5, -15)
+    button_subtract_1 = tk.Button(intensity_button_frame, text="-1", font=("Arial", 20), command=lambda: update_max_intensity(-1))
     button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
-    
-    button_subtract_5 = tk.Button(intensity_button_frame, text="-5", font=("Arial", 12), command=lambda: update_max_intensity(-5))
+
+    button_subtract_5 = tk.Button(intensity_button_frame, text="-5", font=("Arial", 20), command=lambda: update_max_intensity(-5))
     button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
-    
-    button_subtract_15 = tk.Button(intensity_button_frame, text="-15", font=("Arial", 12), command=lambda: update_max_intensity(-15))
+
+    button_subtract_15 = tk.Button(intensity_button_frame, text="-15", font=("Arial", 20), command=lambda: update_max_intensity(-15))
     button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
 
     # Create the max intensity label above the value box
-    max_intensity_label = tk.Label(intensity_button_frame, text="Maximum Intensity", font=("Arial", 14))
+    max_intensity_label = tk.Label(intensity_button_frame, text="Maximum Intensity", font=("Arial", 20))
     max_intensity_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
 
     # Create the value box to show the intensity number in the middle
-    max_intensity_value = tk.Label(intensity_button_frame, text="100", font=("Arial", 14), relief="solid", width=10, height=2)
+    max_intensity_value = tk.Label(intensity_button_frame, text="100", font=("Arial", 20), relief="solid", width=10, height=2)
     max_intensity_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
 
     # Buttons for the right side (+1, +5, +15)
-    button_add_1 = tk.Button(intensity_button_frame, text="+1", font=("Arial", 12), command=lambda: update_max_intensity(1))
+    button_add_1 = tk.Button(intensity_button_frame, text="+1", font=("Arial", 20), command=lambda: update_max_intensity(1))
     button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
-    
-    button_add_5 = tk.Button(intensity_button_frame, text="+5", font=("Arial", 12), command=lambda: update_max_intensity(5))
+
+    button_add_5 = tk.Button(intensity_button_frame, text="+5", font=("Arial", 20), command=lambda: update_max_intensity(5))
     button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
-    
-    button_add_15 = tk.Button(intensity_button_frame, text="+15", font=("Arial", 12), command=lambda: update_max_intensity(15))
+
+    button_add_15 = tk.Button(intensity_button_frame, text="+15", font=("Arial", 20), command=lambda: update_max_intensity(15))
     button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
+
+
+
+# Minimum Intensity Functionality
+min_intensity_value = None
+
+def update_min_intensity(change):
+    global min_intensity_value
+    current_value = int(min_intensity_value.cget("text"))
+    new_value = current_value + change
+    if new_value < -10:
+        new_value = -10
+    min_intensity_value.config(text=str(new_value))
+
+def create_min_intensity_buttons():
+    global min_intensity_value
+    min_intensity_button_frame = tk.Frame(root)
+    min_intensity_button_frame.place(relx=0.01, rely=0.70, anchor="w")
+
+    button_subtract_1 = tk.Button(min_intensity_button_frame, text="-1", font=("Arial", 20), command=lambda: update_min_intensity(-1))
+    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_5 = tk.Button(min_intensity_button_frame, text="-5", font=("Arial", 20), command=lambda: update_min_intensity(-5))
+    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
+
+    button_subtract_15 = tk.Button(min_intensity_button_frame, text="-15", font=("Arial", 20), command=lambda: update_min_intensity(-15))
+    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
+
+    min_intensity_label = tk.Label(min_intensity_button_frame, text="Minimum Intensity", font=("Arial", 20))
+    min_intensity_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    min_intensity_value = tk.Label(min_intensity_button_frame, text="-10", font=("Arial", 20), relief="solid", width=10, height=2)
+    min_intensity_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
+
+    button_add_1 = tk.Button(min_intensity_button_frame, text="+1", font=("Arial", 20), command=lambda: update_min_intensity(1))
+    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_5 = tk.Button(min_intensity_button_frame, text="+5", font=("Arial", 20), command=lambda: update_min_intensity(5))
+    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
+
+    button_add_15 = tk.Button(min_intensity_button_frame, text="+15", font=("Arial", 20), command=lambda: update_min_intensity(15))
+    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
+
     
     # Adjust column weights to create spacing
     intensity_button_frame.grid_columnconfigure(0, weight=1)
@@ -246,15 +289,10 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
 
-        # Show maximum intensity box in DOC tab, move it to the bottom-left corner
-       # max_intensity_label = tk.Label(root, text="Maximum Intensity", font=("Arial", 14))
-       # max_intensity_label.place(relx=0.12, rely=0.4, anchor="w")
-        
-        max_intensity_value = tk.Label(root, text="100", font=("Arial", 14), relief="solid", width=10, height=2)
-        max_intensity_value.place(relx=0.12, rely=0.45, anchor="w")
-        
+
         # Create intensity buttons
-        create_intensity_buttons()
+        create_max_intensity_buttons()
+        create_min_intensity_buttons()
 
         try:
             button_tank_frame.place_forget()
