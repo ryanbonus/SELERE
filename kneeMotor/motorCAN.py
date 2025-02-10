@@ -33,11 +33,11 @@ def can_handler_thread(bus, jointMotors):
         
         if msg:
             try:
-                jointMotors[0].position = int((msg[44:46]+msg[47:49]), 16)
-                jointMotors[0].speed = int((msg[50:52]+msg[53:55]), 16)
-                jointMotors[0].current = int((msg[56:58]+msg[59:61]), 16)
-                jointMotors[0].temp = int((msg[62:64]), 16)
-                jointMotors[0].errorCode = int((msg[65:67]), 16)
+                jointMotors[0].position = (msg.data[0]<<8)+msg.data[1]
+                jointMotors[0].speed = (msg.data[2]<<8)+msg.data[3]
+                jointMotors[0].current = (msg.data[4]<<8)+msg.data[5]
+                jointMotors[0].temp = msg.data[6]
+                jointMotors[0].errorCode = msg.data[7]
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")
 
