@@ -8,6 +8,8 @@ root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
 exo = Exoskeleton()
+#leftKnee = exo.kneeMotor
+#leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -78,7 +80,7 @@ joint_frame = tk.Frame(root)
 joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
 # Tank-style sliders
-slider_heights = (0, 650)  # Change these values to modify the min and max values of the height and intensity sliders
+slider_heights = (0, 650) #Change these values to modify the min and max values of the height and intensity sliders
 slider_widths = (0, 50)
 
 
@@ -153,6 +155,92 @@ for joint in joints:
         col = 0
         row += 1
 
+# Create a frame for the DOC tab buttons
+doc_button_frame = tk.Frame(root)
+
+
+# Create a frame for the DOC tab buttons
+doc_button_frame = tk.Frame(root)
+
+# Create intensity and height buttons with initial values
+max_intensity = tk.IntVar(value=100)
+min_intensity = tk.IntVar(value=0)
+max_height = tk.IntVar(value=100)
+min_height = tk.IntVar(value=0)
+
+# Create StringVar variables to track values
+max_intensity_var = tk.StringVar(value="Max Intensity\n100")
+min_intensity_var = tk.StringVar(value="Min Intensity\n0")
+max_height_var = tk.StringVar(value="Max Height\n100")
+min_height_var = tk.StringVar(value="Min Height\n0")
+
+# Create intensity and height buttons with labels + values
+# Define the font size for the buttons
+#button_font = ("Arial", 24)  # Change 16 to whatever size you want
+
+# Create intensity and height buttons with labels + values
+max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=2, width=10, font=("Arial", 24))
+min_intensity_button = tk.Button(doc_button_frame, textvariable=min_intensity_var, height=2, width=10, font=("Arial", 24))
+max_height_button = tk.Button(doc_button_frame, textvariable=max_height_var, height=2, width=10, font=("Arial", 24))
+min_height_button = tk.Button(doc_button_frame, textvariable=min_height_var, height=2, width=10, font=("Arial", 24))
+
+# Place buttons in a 2x2 layout
+max_intensity_button.grid(row=0, column=0, padx=5, pady=5)
+min_intensity_button.grid(row=1, column=0, padx=5, pady=5)
+max_height_button.grid(row=0, column=1, padx=5, pady=5)
+min_height_button.grid(row=1, column=1, padx=5, pady=5)
+
+selected_doc_button = tk.StringVar(value="Max Intensity")
+
+# Function to update button labels dynamically when values change
+def update_button_labels():
+    max_intensity_var.set(f"Max Intensity\n{max_intensity.get()}")
+    min_intensity_var.set(f"Min Intensity\n{min_intensity.get()}")
+    max_height_var.set(f"Max Height\n{max_height.get()}")
+    min_height_var.set(f"Min Height\n{min_height.get()}")
+
+# Function to handle button selection
+def select_doc_button(label):
+    selected_doc_button.set(label)
+    update_doc_button_colors()
+    update_selected_label(label)  # This will update the displayed label
+
+# Function to handle button click
+def on_button_click(label):
+    select_doc_button(label)
+
+# Add button click bindings for each button
+max_intensity_button.config(command=lambda: on_button_click("Max Intensity"))
+min_intensity_button.config(command=lambda: on_button_click("Min Intensity"))
+max_height_button.config(command=lambda: on_button_click("Max Height"))
+min_height_button.config(command=lambda: on_button_click("Min Height"))
+
+# Function to update the label text with the selected button's text
+def update_selected_label(label):
+    selected_button_label.config(text=label)
+
+# Function to update button colors dynamically
+def update_doc_button_colors():
+    buttons = [
+        (max_intensity_button, "Max Intensity"),
+        (min_intensity_button, "Min Intensity"),
+        (max_height_button, "Max Height"),
+        (min_height_button, "Min Height")
+    ]
+    
+    for button, label in buttons:
+        button.config(bg="green" if selected_doc_button.get() == label else root.cget("bg"))
+
+# Create a label to display the selected button (placed to the right)
+selected_button_label = tk.Label(doc_button_frame, textvariable=selected_doc_button, font=("Arial", 30), relief="solid", width=20)
+selected_button_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
+
+# Call this function whenever values change
+update_button_labels()
+
+
+
+
 # Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
@@ -169,203 +257,16 @@ def update_button_colors():
 
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
-# Declare max_intensity_value globally
-# Declare max_intensity_value globally
-max_intensity_value = None
-
-def update_max_intensity(change):
-    global max_intensity_value  # Reference the global variable
-    # Get the current value from the label, adjust by change, and update it
-    current_value = int(max_intensity_value.cget("text"))  # Get current value from the label
-    new_value = current_value + change
-    # Ensure the value doesn't go below 0
-    if new_value < 0:
-        new_value = 0
-    # Update the label text with the new value
-    max_intensity_value.config(text=str(new_value))
-
-def create_max_intensity_buttons():
-    global max_intensity_value  # Make sure to reference the global variable
-    
-    # Create a frame to hold the buttons and box, shift everything to the left
-    intensity_button_frame = tk.Frame(root)
-    intensity_button_frame.place(relx=0.01, rely=0.45, anchor="w")  # Shift further left
-
-   # Buttons for the left side (-1, -5, -15)
-    button_subtract_1 = tk.Button(intensity_button_frame, text="-1", font=("Arial", 20), command=lambda: update_max_intensity(-1))
-    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
-
-    button_subtract_5 = tk.Button(intensity_button_frame, text="-5", font=("Arial", 20), command=lambda: update_max_intensity(-5))
-    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
-
-    button_subtract_15 = tk.Button(intensity_button_frame, text="-15", font=("Arial", 20), command=lambda: update_max_intensity(-15))
-    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")  # Reduced pady
-
-    # Create the max intensity label above the value box
-    max_intensity_label = tk.Label(intensity_button_frame, text="Maximum Intensity", font=("Arial", 20))
-    max_intensity_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    # Create the value box to show the intensity number in the middle
-    max_intensity_value = tk.Label(intensity_button_frame, text="100", font=("Arial", 20), relief="solid", width=10, height=2)
-    max_intensity_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    # Buttons for the right side (+1, +5, +15)
-    button_add_1 = tk.Button(intensity_button_frame, text="+1", font=("Arial", 20), command=lambda: update_max_intensity(1))
-    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
-
-    button_add_5 = tk.Button(intensity_button_frame, text="+5", font=("Arial", 20), command=lambda: update_max_intensity(5))
-    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
-
-    button_add_15 = tk.Button(intensity_button_frame, text="+15", font=("Arial", 20), command=lambda: update_max_intensity(15))
-    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")  # Reduced pady
-
-
-
-# Minimum Intensity Functionality
-min_intensity_value = None
-
-def update_min_intensity(change):
-    global min_intensity_value
-    current_value = int(min_intensity_value.cget("text"))
-    new_value = current_value + change
-    if new_value < -10:
-        new_value = -10
-    min_intensity_value.config(text=str(new_value))
-
-def create_min_intensity_buttons():
-    global min_intensity_value
-    min_intensity_button_frame = tk.Frame(root)
-    min_intensity_button_frame.place(relx=0.01, rely=0.70, anchor="w")
-
-    button_subtract_1 = tk.Button(min_intensity_button_frame, text="-1", font=("Arial", 20), command=lambda: update_min_intensity(-1))
-    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_5 = tk.Button(min_intensity_button_frame, text="-5", font=("Arial", 20), command=lambda: update_min_intensity(-5))
-    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_15 = tk.Button(min_intensity_button_frame, text="-15", font=("Arial", 20), command=lambda: update_min_intensity(-15))
-    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
-
-    min_intensity_label = tk.Label(min_intensity_button_frame, text="Minimum Intensity", font=("Arial", 20))
-    min_intensity_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    min_intensity_value = tk.Label(min_intensity_button_frame, text="-10", font=("Arial", 20), relief="solid", width=10, height=2)
-    min_intensity_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    button_add_1 = tk.Button(min_intensity_button_frame, text="+1", font=("Arial", 20), command=lambda: update_min_intensity(1))
-    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_5 = tk.Button(min_intensity_button_frame, text="+5", font=("Arial", 20), command=lambda: update_min_intensity(5))
-    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_15 = tk.Button(min_intensity_button_frame, text="+15", font=("Arial", 20), command=lambda: update_min_intensity(15))
-    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
-
-
-max_height_value = None
-
-def update_max_height(change):
-    global max_height_value  # Reference the global variable
-    current_value = int(max_height_value.cget("text"))  # Get current value from the label
-    new_value = current_value + change
-    # Ensure the value doesn't go below 0
-    if new_value < 0:
-        new_value = 0
-    # Update the label text with the new value
-    max_height_value.config(text=str(new_value))
-
-def create_max_height_buttons():
-    global max_height_value  # Make sure to reference the global variable
-    
-    # Create a frame to hold the buttons and box
-    height_button_frame = tk.Frame(root)
-    height_button_frame.place(relx=0.21, rely=0.45, anchor="w")  # Adjust position as needed
-
-    # Buttons for the left side (-1, -5, -15)
-    button_subtract_1 = tk.Button(height_button_frame, text="-1", font=("Arial", 20), command=lambda: update_max_height(-1))
-    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_5 = tk.Button(height_button_frame, text="-5", font=("Arial", 20), command=lambda: update_max_height(-5))
-    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_15 = tk.Button(height_button_frame, text="-15", font=("Arial", 20), command=lambda: update_max_height(-15))
-    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
-
-    # Create the max height label above the value box
-    max_height_label = tk.Label(height_button_frame, text="Maximum Height", font=("Arial", 20))
-    max_height_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    # Create the value box to show the height number
-    max_height_value = tk.Label(height_button_frame, text="100", font=("Arial", 20), relief="solid", width=10, height=2)
-    max_height_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    # Buttons for the right side (+1, +5, +15)
-    button_add_1 = tk.Button(height_button_frame, text="+1", font=("Arial", 20), command=lambda: update_max_height(1))
-    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_5 = tk.Button(height_button_frame, text="+5", font=("Arial", 20), command=lambda: update_max_height(5))
-    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_15 = tk.Button(height_button_frame, text="+15", font=("Arial", 20), command=lambda: update_max_height(15))
-    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
-
-# Minimum Height Functionality
-min_height_value = None
-
-def update_min_height(change):
-    global min_height_value
-    current_value = int(min_height_value.cget("text"))
-    new_value = current_value + change
-    if new_value < -10:
-        new_value = -10
-    min_height_value.config(text=str(new_value))
-
-def create_min_height_buttons():
-    global min_height_value
-    min_height_button_frame = tk.Frame(root)
-    min_height_button_frame.place(relx=0.21, rely=0.70, anchor="w")
-
-    button_subtract_1 = tk.Button(min_height_button_frame, text="-1", font=("Arial", 20), command=lambda: update_min_height(-1))
-    button_subtract_1.grid(row=0, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_5 = tk.Button(min_height_button_frame, text="-5", font=("Arial", 20), command=lambda: update_min_height(-5))
-    button_subtract_5.grid(row=1, column=0, padx=10, pady=2, sticky="w")
-
-    button_subtract_15 = tk.Button(min_height_button_frame, text="-15", font=("Arial", 20), command=lambda: update_min_height(-15))
-    button_subtract_15.grid(row=2, column=0, padx=10, pady=2, sticky="w")
-
-    min_height_label = tk.Label(min_height_button_frame, text="Minimum Height", font=("Arial", 20))
-    min_height_label.grid(row=0, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    min_height_value = tk.Label(min_height_button_frame, text="-10", font=("Arial", 20), relief="solid", width=10, height=2)
-    min_height_value.grid(row=1, column=1, columnspan=3, padx=10, pady=5, sticky="nsew")
-
-    button_add_1 = tk.Button(min_height_button_frame, text="+1", font=("Arial", 20), command=lambda: update_min_height(1))
-    button_add_1.grid(row=0, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_5 = tk.Button(min_height_button_frame, text="+5", font=("Arial", 20), command=lambda: update_min_height(5))
-    button_add_5.grid(row=1, column=4, padx=10, pady=2, sticky="e")
-
-    button_add_15 = tk.Button(min_height_button_frame, text="+15", font=("Arial", 20), command=lambda: update_min_height(15))
-    button_add_15.grid(row=2, column=4, padx=10, pady=2, sticky="e")
-
-    
-    # Adjust column weights to create spacing
-    intensity_button_frame.grid_columnconfigure(0, weight=1)
-    intensity_button_frame.grid_columnconfigure(1, weight=2)
-    intensity_button_frame.grid_columnconfigure(2, weight=2)
-    intensity_button_frame.grid_columnconfigure(3, weight=1)
-    intensity_button_frame.grid_columnconfigure(4, weight=1)
 
 def update_visibility():
-    global max_intensity_value  # Ensure we reference the global variable
-    
+    global button_tank_frame, start_button, blank_tank
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        doc_button_frame.place_forget()  # Hide DOC buttons
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
@@ -373,17 +274,11 @@ def update_visibility():
             button_tank_frame.place_forget()
         except NameError:
             pass
+
     elif selected_tab.get() == "DOC":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-
-
-        # Create intensity buttons
-        create_max_intensity_buttons()
-        create_min_intensity_buttons()
-        create_max_height_buttons()
-        create_min_height_buttons()
-
+        doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
         try:
             button_tank_frame.place_forget()
         except NameError:
@@ -391,12 +286,13 @@ def update_visibility():
     else:
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
+        doc_button_frame.place_forget()  # Hide DOC buttons
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
-        start_button.bind("<ButtonPress", start_button_pressed)
-        start_button.bind("<ButtonRelease", start_button_released)        
+        start_button.bind("<ButtonPress>", start_button_pressed)
+        start_button.bind("<ButtonRelease>", start_button_released)        
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
 
