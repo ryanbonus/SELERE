@@ -3,10 +3,10 @@ import can
 from datetime import datetime
 import time
 import threading
+from kneeMotor.motorControl import set_origin
 
 #Motor parameters
 BITRATE = 500000
-LOGGING_DELAY = 60 #In seconds, used to add a delay between logs so that redundant status updates don't clog the log and create a huge file. Todo, create a function that only allows unique logs to be written to file. Make that function append a time range to the previous log for clarity.
 
 def write_log(log_text, log_dir="logs"):
     #print(log_text)  #for live debugging
@@ -41,8 +41,7 @@ def can_handler_thread(bus, jointMotors):
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")
 
-            write_log(msg)
-            time.sleep(LOGGING_DELAY) # This magic number changes the logging frequency. 
+            #write_log(msg)
 
 
 def comm_can_transmit_eid(bus, eid, data):
@@ -72,6 +71,8 @@ def demo_event_loop(canBus):
 def tkinter_loop(jointMotors, canBus, tkLoop):
     for component in jointMotors:
         component.canbus = canBus
+    
+    comm_can_transmit_eid(*set_origin(canBus, 0))
     tkLoop()
 
 def start_can(jointMotors, eventLoop, event):

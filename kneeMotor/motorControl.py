@@ -1,5 +1,4 @@
 import numpy as np
-from kneeMotor.motorCAN import comm_can_transmit_eid
 
 #Motor parameters
 BITRATE = 500000
@@ -37,32 +36,32 @@ def position_speed_acceleration(bus, position, speed, rpa, controller_id=CONTROL
     buffer_append_int16(buffer, speed/10, speed_index)
     buffer_append_int16(buffer, rpa/10, rpa_index)
     eid = (controller_id | int(CAN_PACKET_SET_POS_SPD) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)
+    return(bus, eid, buffer)
 
 def current(bus, current, controller_id=CONTROLLER_ID):
     current_index = 0
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(current*1000), current_index)
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)
+    return(bus, eid, buffer)
 
 def speed(bus, rpm, controller_id=CONTROLLER_ID):
     speed_index = 0
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(rpm), speed_index)
     eid = (controller_id | int(CAN_PACKET_SET_RPM) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)       
+    return(bus, eid, buffer)       
 
 def current_brake(bus, current, controller_id=CONTROLLER_ID):
     current_index = 0
     buffer = bytearray(0)
     buffer_append_int32(buffer, np.int32(current*1000), current_index)
     eid = (controller_id | int(CAN_PACKET_SET_CURRENT_BRAKE) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)
+    return(bus, eid, buffer)
 
 def set_origin(bus, set_origin_mode: int, controller_id=CONTROLLER_ID):
     mode_index = 0
     buffer = bytearray(0)
     buffer_append(1, buffer, set_origin_mode, mode_index)
     eid = (controller_id | int(CAN_PACKET_SET_ORIGIN_HERE) << 8)
-    comm_can_transmit_eid(bus, eid, buffer)  
+    return(bus, eid, buffer)  

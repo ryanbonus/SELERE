@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import ttk
 from classes import Exoskeleton
-from kneeMotor.motorCAN import start_can, tkinter_loop
+from kneeMotor.motorCAN import start_can, tkinter_loop, comm_can_transmit_eid, write_log
 from kneeMotor.motorControl import current, set_origin, speed
 
 # Initialize main window
@@ -48,13 +48,33 @@ def control_joint(joint):
 def start_button_pressed(*args):
     print("Start button clicked")
     exo.currentState = exo.states[1]
-    speed(exo.leftKnee.canbus, 1250)
+    if exo.currentState == "started":
+        run()
+
+def run():
+    if exo.currentMode.name == "Full Assistance":
+        position = exo.leftKnee.getPosition()
+        if position > exo.leftKnee.rangeOfMotionTop:
+            exo.leftKnee.direction = 0
+        if position < exo.leftKnee.rangeOfMotionBottom:
+            exo.leftKnee.direction = 1
+        if exo.leftKnee.direction == 0:
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 1250))
+            write_log(position)
+        else:
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -1250))
+            write_log(position)
+        if exo.currentState == "started":
+            
+            root.after(1, run)
+        else:
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0)) 
+    
 
 def start_button_released(*args):
     print("Start button released")
     exo.currentState = exo.states[0]
-    speed(exo.leftKnee.canbus, 0)
-    set_origin(exo.leftKnee.canbus, 0)
+
     
 
 # Create frames for different sections
