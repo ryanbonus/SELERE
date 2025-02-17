@@ -8,8 +8,6 @@ root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
 exo = Exoskeleton()
-#leftKnee = exo.kneeMotor
-#leftAnkle = exo.ankleMotor
 
 # Variables to track selected mode, joint, and tab
 selected_mode = tk.StringVar(value="Mode 1")
@@ -33,7 +31,6 @@ def switch_tab(tab):
         update_button_colors()
         update_visibility()
         print(f"Switched to {tab} tab")
-
 
 def control_joint(joint):
     if selected_joint.get() != joint:  # Only change if it's different
@@ -82,7 +79,6 @@ joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 # Tank-style sliders
 slider_heights = (0, 650) #Change these values to modify the min and max values of the height and intensity sliders
 slider_widths = (0, 50)
-
 
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
@@ -158,10 +154,6 @@ for joint in joints:
 # Create a frame for the DOC tab buttons
 doc_button_frame = tk.Frame(root)
 
-
-# Create a frame for the DOC tab buttons
-doc_button_frame = tk.Frame(root)
-
 # Create intensity and height buttons with initial values
 max_intensity = tk.IntVar(value=100)
 min_intensity = tk.IntVar(value=0)
@@ -173,10 +165,6 @@ max_intensity_var = tk.StringVar(value="Max Intensity\n100")
 min_intensity_var = tk.StringVar(value="Min Intensity\n0")
 max_height_var = tk.StringVar(value="Max Height\n100")
 min_height_var = tk.StringVar(value="Min Height\n0")
-
-# Create intensity and height buttons with labels + values
-# Define the font size for the buttons
-#button_font = ("Arial", 24)  # Change 16 to whatever size you want
 
 # Create intensity and height buttons with labels + values
 max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=2, width=10, font=("Arial", 24))
@@ -238,9 +226,6 @@ selected_button_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10, stick
 # Call this function whenever values change
 update_button_labels()
 
-
-
-
 # Configure the grid so that the buttons stretch to fill the space
 for i in range(2):
     joint_frame.grid_rowconfigure(i, weight=1)
@@ -287,6 +272,79 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
         doc_button_frame.place_forget()  # Hide DOC buttons
+        button_tank_frame = tk.Frame(root)
+        button_tank_frame.place(x=50, y=350, width=700, height=560)
+        start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
+        start_button.place(x=0, y=0, width=500, height=560)
+        start_button.bind("<ButtonPress>", start_button_pressed)
+        start_button.bind("<ButtonRelease>", start_button_released)        
+        blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
+        blank_tank.place(x=550, y=0, width=100, height=560)
+
+# Create a frame for the new buttons
+new_button_frame = tk.Frame(root)
+
+# Function to update the selected value
+def update_value(delta):
+    selected = selected_doc_button.get()
+    if selected == "Max Intensity":
+        max_intensity.set(max_intensity.get() + delta)
+    elif selected == "Min Intensity":
+        min_intensity.set(min_intensity.get() + delta)
+    elif selected == "Max Height":
+        max_height.set(max_height.get() + delta)
+    elif selected == "Min Height":
+        min_height.set(min_height.get() + delta)
+    update_button_labels()
+
+# Create the new buttons
+buttons = [
+    ("+1", lambda: update_value(1)),
+    ("+5", lambda: update_value(5)),
+    ("+15", lambda: update_value(15)),
+    ("-1", lambda: update_value(-1)),
+    ("-5", lambda: update_value(-5)),
+    ("-15", lambda: update_value(-15))
+]
+
+# Place the buttons in 2 rows and 3 columns
+for idx, (text, command) in enumerate(buttons):
+    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=7, font=("Arial", 24))
+    button.grid(row=idx // 3, column=idx % 3, padx=5, pady=5)
+
+# Update the update_visibility function to show/hide the new buttons
+def update_visibility():
+    global button_tank_frame, start_button, blank_tank
+    mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+
+    if selected_tab.get() == "Edit":
+        slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        doc_button_frame.place_forget()  # Hide DOC buttons
+        new_button_frame.place_forget()  # Hide new buttons
+        root.update_idletasks()
+        root.tk.call("raise", intensity_tank._w)
+        root.tk.call("raise", height_tank._w)
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass
+
+    elif selected_tab.get() == "DOC":
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        slider_frame.place_forget()
+        doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
+        new_button_frame.place(relx=0.05, rely=0.55, relwidth=0.25, relheight=0.2)  # Show new buttons
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass
+    else:
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        slider_frame.place_forget()
+        doc_button_frame.place_forget()  # Hide DOC buttons
+        new_button_frame.place_forget()  # Hide new buttons
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
