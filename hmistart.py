@@ -36,17 +36,18 @@ settings = {
     },
 }
 
-# Function placeholders for button actions
+# Function to set the mode
 def set_mode(mode):
-    if exo.currentMode.number != mode:  # Only change if it's different
-        selected_mode.set(f"Mode {mode}")
-        update_button_colors()
-        if mode in exo.modes:
-            print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
-            exo.currentMode = exo.modes[mode-1] 
+    mode_name = f"Mode {mode}"  # Construct the mode name (e.g., "Mode 1")
+    if selected_mode.get() != mode_name:  # Only change if it's different
+        selected_mode.set(mode_name)  # Update the selected_mode variable
+        update_button_colors()  # Update button colors
+        if mode in [m.number for m in exo.modes]:  # Check if mode exists
+            print(f"Mode set to: {mode_name}")
+            exo.currentMode = exo.modes[mode - 1]  # Update the current mode in the exoskeleton
         else:
-            print(f"Mode {mode} does not exist")
-        update_button_labels()  # Update labels when mode changes
+            print(f"Mode {mode_name} does not exist")
+        update_button_labels()  # Update the button labels to reflect the new mode's settings
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
@@ -138,7 +139,7 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = [exo.modeFA, exo.modePA, exo.modePR]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
+    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 16), activebackground="green")
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
