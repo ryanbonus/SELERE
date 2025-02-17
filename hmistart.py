@@ -14,16 +14,39 @@ selected_mode = tk.StringVar(value="Mode 1")
 selected_joint = tk.StringVar(value="Left Knee")
 selected_tab = tk.StringVar(value="Edit")
 
+# Dictionary to store settings for each mode and joint
+settings = {
+    "Mode 1": {
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+    },
+    "Mode 2": {
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+    },
+    "Mode 3": {
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+    },
+}
+
 # Function placeholders for button actions
 def set_mode(mode):
     if exo.currentMode.number != mode:  # Only change if it's different
-        selected_mode.set(mode)
+        selected_mode.set(f"Mode {mode}")
         update_button_colors()
         if mode in exo.modes:
             print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
             exo.currentMode = exo.modes[mode-1] 
         else:
             print(f"Mode {mode} does not exist")
+        update_button_labels()  # Update labels when mode changes
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
@@ -41,6 +64,7 @@ def control_joint(joint):
             exo.currentJoint = joint
         else:
             print(f"Joint {joint} does not exist")
+        update_button_labels()  # Update labels when joint changes
 
 # Function for Start button
 def start_button_pressed():
@@ -154,12 +178,6 @@ for joint in joints:
 # Create a frame for the DOC tab buttons
 doc_button_frame = tk.Frame(root)
 
-# Create intensity and height buttons with initial values
-max_intensity = tk.IntVar(value=100)
-min_intensity = tk.IntVar(value=0)
-max_height = tk.IntVar(value=100)
-min_height = tk.IntVar(value=0)
-
 # Create StringVar variables to track values
 max_intensity_var = tk.StringVar(value="Max Intensity\n100")
 min_intensity_var = tk.StringVar(value="Min Intensity\n0")
@@ -182,10 +200,12 @@ selected_doc_button = tk.StringVar(value="Max Intensity")
 
 # Function to update button labels dynamically when values change
 def update_button_labels():
-    max_intensity_var.set(f"Max Intensity\n{max_intensity.get()}")
-    min_intensity_var.set(f"Min Intensity\n{min_intensity.get()}")
-    max_height_var.set(f"Max Height\n{max_height.get()}")
-    min_height_var.set(f"Min Height\n{min_height.get()}")
+    mode = selected_mode.get()
+    joint = selected_joint.get()
+    max_intensity_var.set(f"Max Intensity\n{settings[mode][joint]['max_intensity']}")
+    min_intensity_var.set(f"Min Intensity\n{settings[mode][joint]['min_intensity']}")
+    max_height_var.set(f"Max Height\n{settings[mode][joint]['max_height']}")
+    min_height_var.set(f"Min Height\n{settings[mode][joint]['min_height']}")
 
 # Function to handle button selection
 def select_doc_button(label):
@@ -252,76 +272,6 @@ def update_visibility():
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         doc_button_frame.place_forget()  # Hide DOC buttons
-        root.update_idletasks()
-        root.tk.call("raise", intensity_tank._w)
-        root.tk.call("raise", height_tank._w)
-        try:
-            button_tank_frame.place_forget()
-        except NameError:
-            pass
-
-    elif selected_tab.get() == "DOC":
-        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        slider_frame.place_forget()
-        doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
-        try:
-            button_tank_frame.place_forget()
-        except NameError:
-            pass
-    else:
-        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        slider_frame.place_forget()
-        doc_button_frame.place_forget()  # Hide DOC buttons
-        button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=700, height=560)
-        start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
-        start_button.place(x=0, y=0, width=500, height=560)
-        start_button.bind("<ButtonPress>", start_button_pressed)
-        start_button.bind("<ButtonRelease>", start_button_released)        
-        blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
-        blank_tank.place(x=550, y=0, width=100, height=560)
-
-# Create a frame for the new buttons
-new_button_frame = tk.Frame(root)
-
-# Function to update the selected value
-def update_value(delta):
-    selected = selected_doc_button.get()
-    if selected == "Max Intensity":
-        max_intensity.set(max_intensity.get() + delta)
-    elif selected == "Min Intensity":
-        min_intensity.set(min_intensity.get() + delta)
-    elif selected == "Max Height":
-        max_height.set(max_height.get() + delta)
-    elif selected == "Min Height":
-        min_height.set(min_height.get() + delta)
-    update_button_labels()
-
-# Create the new buttons
-buttons = [
-    ("+1", lambda: update_value(1)),
-    ("+5", lambda: update_value(5)),
-    ("+15", lambda: update_value(15)),
-    ("-1", lambda: update_value(-1)),
-    ("-5", lambda: update_value(-5)),
-    ("-15", lambda: update_value(-15))
-]
-
-# Place the buttons in 2 rows and 3 columns
-for idx, (text, command) in enumerate(buttons):
-    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=7, font=("Arial", 24))
-    button.grid(row=idx // 3, column=idx % 3, padx=5, pady=5)
-
-# Update the update_visibility function to show/hide the new buttons
-def update_visibility():
-    global button_tank_frame, start_button, blank_tank
-    mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
-    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
-
-    if selected_tab.get() == "Edit":
-        slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
-        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        doc_button_frame.place_forget()  # Hide DOC buttons
         new_button_frame.place_forget()  # Hide new buttons
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
@@ -353,6 +303,39 @@ def update_visibility():
         start_button.bind("<ButtonRelease>", start_button_released)        
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
+
+# Create a frame for the new buttons
+new_button_frame = tk.Frame(root)
+
+# Function to update the selected value
+def update_value(delta):
+    mode = selected_mode.get()
+    joint = selected_joint.get()
+    selected = selected_doc_button.get()
+    if selected == "Max Intensity":
+        settings[mode][joint]["max_intensity"] += delta
+    elif selected == "Min Intensity":
+        settings[mode][joint]["min_intensity"] += delta
+    elif selected == "Max Height":
+        settings[mode][joint]["max_height"] += delta
+    elif selected == "Min Height":
+        settings[mode][joint]["min_height"] += delta
+    update_button_labels()
+
+# Create the new buttons
+buttons = [
+    ("+1", lambda: update_value(1)),
+    ("+5", lambda: update_value(5)),
+    ("+15", lambda: update_value(15)),
+    ("-1", lambda: update_value(-1)),
+    ("-5", lambda: update_value(-5)),
+    ("-15", lambda: update_value(-15))
+]
+
+# Place the buttons in 2 rows and 3 columns
+for idx, (text, command) in enumerate(buttons):
+    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=7, font=("Arial", 24))
+    button.grid(row=idx // 3, column=idx % 3, padx=5, pady=5)
 
 # Set initial button colors and visibility
 update_button_colors()
