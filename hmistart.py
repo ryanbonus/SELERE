@@ -59,10 +59,11 @@ def run():
         if position < exo.leftKnee.rangeOfMotionBottom:
             exo.leftKnee.direction = 1
         if exo.leftKnee.direction == 0:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 1250))
+            print(exo.leftKnee.speed)
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, exo.leftKnee.speed*12))
             write_log(position)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -1250))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0-(exo.leftKnee.speed*12)+1))
             write_log(position)
         if exo.currentState == "started":
             
@@ -109,6 +110,8 @@ slider_widths = (0, 50)
 
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
+    exo.leftKnee.speed = val #Variable speed
+    write_log(f"Knee speed set to {exo.leftKnee.speed}")
 
 def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
