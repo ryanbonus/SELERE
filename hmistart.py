@@ -1,5 +1,4 @@
 import tkinter as tk
-from tkinter import ttk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can
 
@@ -7,6 +6,7 @@ from kneeMotor.motorCAN import start_can
 root = tk.Tk()
 root.title("Touch Screen Interface")
 root.geometry("1024x600")
+root.configure(bg="lightgray")  
 exo = Exoskeleton()
 
 # Variables to track selected mode, joint, tab, and DOC button
@@ -103,24 +103,21 @@ joint_frame = tk.Frame(root)
 joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 
 # Tank-style sliders
-slider_heights = (0, 650) #Change these values to modify the min and max values of the height and intensity sliders
-slider_widths = (0, 50)
+slider_heights = (0, 650)  # Change these values to modify the min and max values of the height and intensity sliders
+slider_widths = (0, 100)  # Increased width from 50 to 100
 
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
 
 def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    
+
 # Intensity tank
 intensity_label = tk.Label(slider_frame, text="Intensity")
 intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
-intensity_fill = intensity_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="blue")
+intensity_fill = intensity_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
 intensity_tank.grid(row=1, column=0, padx=5, pady=5)
-intensity_slider = ttk.Scale(slider_frame, from_=100, to=0, orient="vertical", command=update_intensity)
-intensity_slider.set(0)
-intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
 
 # Height tank
 height_label = tk.Label(slider_frame, text="Height")
@@ -128,7 +125,36 @@ height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
 height_fill = height_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
 height_tank.grid(row=1, column=2, padx=5, pady=5)
-height_slider = ttk.Scale(slider_frame, from_=100, to=0, orient="vertical", command=update_height)
+
+# Intensity slider (using tk.Scale)
+intensity_slider = tk.Scale(
+    slider_frame, 
+    from_=100, 
+    to=0, 
+    orient="vertical", 
+    command=update_intensity, 
+    length=400,  # Height of the slider
+    width=80,    # Width of the slider (thickness)
+    sliderlength=80,  # Length of the slider thumb
+    troughcolor="lightgray",  # Color of the slider track
+    bg="lightgray"  # Background color of the slider
+)
+intensity_slider.set(0)
+intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
+
+# Height slider (using tk.Scale)
+height_slider = tk.Scale(
+    slider_frame, 
+    from_=100, 
+    to=0, 
+    orient="vertical", 
+    command=update_height, 
+    length=400,  # Height of the slider
+    width=80,    # Width of the slider (thickness)
+    sliderlength=80,  # Length of the slider thumb
+    troughcolor="lightgray",  # Color of the slider track
+    bg="lightgray"  # Background color of the slider
+)
 height_slider.set(0)
 height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
 
