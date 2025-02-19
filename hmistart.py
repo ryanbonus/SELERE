@@ -187,10 +187,10 @@ max_height_var = tk.StringVar(value="Max Height\n100")
 min_height_var = tk.StringVar(value="Min Height\n0")
 
 # Create intensity and height buttons with labels + values (larger size)
-max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=4, width=20, font=("Arial", 24))
-min_intensity_button = tk.Button(doc_button_frame, textvariable=min_intensity_var, height=4, width=20, font=("Arial", 24))
-max_height_button = tk.Button(doc_button_frame, textvariable=max_height_var, height=4, width=20, font=("Arial", 24))
-min_height_button = tk.Button(doc_button_frame, textvariable=min_height_var, height=4, width=20, font=("Arial", 24))
+max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=4, width=20, font=("Arial", 24), activebackground="green")
+min_intensity_button = tk.Button(doc_button_frame, textvariable=min_intensity_var, height=4, width=20, font=("Arial", 24), activebackground="green")
+max_height_button = tk.Button(doc_button_frame, textvariable=max_height_var, height=4, width=20, font=("Arial", 24), activebackground="green")
+min_height_button = tk.Button(doc_button_frame, textvariable=min_height_var, height=4, width=20, font=("Arial", 24), activebackground="green")
 
 # Place buttons in a 2x2 layout
 max_intensity_button.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
@@ -332,7 +332,7 @@ buttons = [
 
 # Place the buttons in 2 rows and 3 columns
 for idx, (text, command) in enumerate(buttons):
-    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=10, font=("Arial", 24))  # Adjusted width to 10
+    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=10, font=("Arial", 24), activebackground="green")  # Adjusted width to 10
     button.grid(row=idx // 3, column=idx % 3, padx=5, pady=5)
 
 # Set initial button colors and visibility
