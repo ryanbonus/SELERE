@@ -9,10 +9,11 @@ root.title("Touch Screen Interface")
 root.geometry("1024x600")
 exo = Exoskeleton()
 
-# Variables to track selected mode, joint, and tab
+# Variables to track selected mode, joint, tab, and DOC button
 selected_mode = tk.StringVar(value="Mode 1")
 selected_joint = tk.StringVar(value="Left Knee")
 selected_tab = tk.StringVar(value="Edit")
+selected_doc_button = tk.StringVar(value="Max Intensity")  # Add this line
 
 # Dictionary to store settings for each mode and joint
 settings = {
@@ -239,10 +240,6 @@ def update_doc_button_colors():
     for button, label in buttons:
         button.config(bg="green" if selected_doc_button.get() == label else root.cget("bg"))
 
-# Create a label to display the selected button (placed to the right)
-selected_button_label = tk.Label(doc_button_frame, textvariable=selected_doc_button, font=("Arial", 30), relief="solid", width=20)
-selected_button_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
-
 # Call this function whenever values change
 update_button_labels()
 
@@ -263,6 +260,7 @@ def update_button_colors():
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
 
+
 def update_visibility():
     global button_tank_frame, start_button, blank_tank
     mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
@@ -273,7 +271,6 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         doc_button_frame.place_forget()  # Hide DOC buttons
         new_button_frame.place_forget()  # Hide new buttons
-        selected_button_label.place_forget()  # Hide selected_button_label
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
@@ -286,7 +283,7 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
         doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
-        new_button_frame.place(relx=0.05, rely=0.55, relwidth=0.25, relheight=0.2)  # Show new buttons
+        new_button_frame.place(relx=0.025, rely=0.65, relwidth=0.4, relheight=0.2)  # Adjusted rely and relwidth for new buttons
         try:
             button_tank_frame.place_forget()
         except NameError:
@@ -296,7 +293,6 @@ def update_visibility():
         slider_frame.place_forget()
         doc_button_frame.place_forget()  # Hide DOC buttons
         new_button_frame.place_forget()  # Hide new buttons
-        selected_button_label.place_forget()  # Hide selected_button_label
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
