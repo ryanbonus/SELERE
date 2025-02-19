@@ -185,19 +185,23 @@ min_intensity_var = tk.StringVar(value="Min Intensity\n0")
 max_height_var = tk.StringVar(value="Max Height\n100")
 min_height_var = tk.StringVar(value="Min Height\n0")
 
-# Create intensity and height buttons with labels + values
-max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=2, width=10, font=("Arial", 24))
-min_intensity_button = tk.Button(doc_button_frame, textvariable=min_intensity_var, height=2, width=10, font=("Arial", 24))
-max_height_button = tk.Button(doc_button_frame, textvariable=max_height_var, height=2, width=10, font=("Arial", 24))
-min_height_button = tk.Button(doc_button_frame, textvariable=min_height_var, height=2, width=10, font=("Arial", 24))
+# Create intensity and height buttons with labels + values (larger size)
+max_intensity_button = tk.Button(doc_button_frame, textvariable=max_intensity_var, height=4, width=20, font=("Arial", 24))
+min_intensity_button = tk.Button(doc_button_frame, textvariable=min_intensity_var, height=4, width=20, font=("Arial", 24))
+max_height_button = tk.Button(doc_button_frame, textvariable=max_height_var, height=4, width=20, font=("Arial", 24))
+min_height_button = tk.Button(doc_button_frame, textvariable=min_height_var, height=4, width=20, font=("Arial", 24))
 
 # Place buttons in a 2x2 layout
-max_intensity_button.grid(row=0, column=0, padx=5, pady=5)
-min_intensity_button.grid(row=1, column=0, padx=5, pady=5)
-max_height_button.grid(row=0, column=1, padx=5, pady=5)
-min_height_button.grid(row=1, column=1, padx=5, pady=5)
+max_intensity_button.grid(row=0, column=0, padx=10, pady=10, sticky="nsew")
+min_intensity_button.grid(row=1, column=0, padx=10, pady=10, sticky="nsew")
+max_height_button.grid(row=0, column=1, padx=10, pady=10, sticky="nsew")
+min_height_button.grid(row=1, column=1, padx=10, pady=10, sticky="nsew")
 
-selected_doc_button = tk.StringVar(value="Max Intensity")
+# Configure the grid to stretch and fill the space
+doc_button_frame.grid_rowconfigure(0, weight=1)
+doc_button_frame.grid_rowconfigure(1, weight=1)
+doc_button_frame.grid_columnconfigure(0, weight=1)
+doc_button_frame.grid_columnconfigure(1, weight=1)
 
 # Function to update button labels dynamically when values change
 def update_button_labels():
@@ -212,7 +216,6 @@ def update_button_labels():
 def select_doc_button(label):
     selected_doc_button.set(label)
     update_doc_button_colors()
-    update_selected_label(label)  # This will update the displayed label
 
 # Function to handle button click
 def on_button_click(label):
@@ -223,10 +226,6 @@ max_intensity_button.config(command=lambda: on_button_click("Max Intensity"))
 min_intensity_button.config(command=lambda: on_button_click("Min Intensity"))
 max_height_button.config(command=lambda: on_button_click("Max Height"))
 min_height_button.config(command=lambda: on_button_click("Min Height"))
-
-# Function to update the label text with the selected button's text
-def update_selected_label(label):
-    selected_button_label.config(text=label)
 
 # Function to update button colors dynamically
 def update_doc_button_colors():
@@ -241,7 +240,7 @@ def update_doc_button_colors():
         button.config(bg="green" if selected_doc_button.get() == label else root.cget("bg"))
 
 # Create a label to display the selected button (placed to the right)
-selected_button_label = tk.Label(doc_button_frame, textvariable=selected_doc_button, font=("Arial", 20), relief="solid", width=20, height=10)
+selected_button_label = tk.Label(doc_button_frame, textvariable=selected_doc_button, font=("Arial", 30), relief="solid", width=20)
 selected_button_label.grid(row=2, column=0, columnspan=2, padx=5, pady=10, sticky="nsew")
 
 # Call this function whenever values change
@@ -263,11 +262,6 @@ def update_button_colors():
 
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
-
-
-update_button_labels()
-
-# ... (rest of the code remains the same until the `update_visibility` function)
 
 def update_visibility():
     global button_tank_frame, start_button, blank_tank
@@ -292,8 +286,7 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
         doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
-        new_button_frame.place(relx=0.025, rely=0.65, relwidth=0.4, relheight=0.2)  # Adjusted rely and relwidth for new buttons
-        selected_button_label.place(relx=0.025, rely=0.55, relwidth=0.4, relheight=0.1)  # Show selected_button_label
+        new_button_frame.place(relx=0.05, rely=0.55, relwidth=0.25, relheight=0.2)  # Show new buttons
         try:
             button_tank_frame.place_forget()
         except NameError:
