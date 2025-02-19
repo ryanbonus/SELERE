@@ -96,9 +96,9 @@ class AnkleMotor:
 # Exoskeleton Class containing modes and motors
 class Exoskeleton:
     def __init__(self, canbus):
-        self.modeFA = Mode("Full Assistance", 1)
-        self.modePA = Mode("Partial Assistance", 2)
-        self.modePR = Mode("Partial Resistance", 3)
+        self.modeFA = Mode("Full", 1)
+        self.modePA = Mode("Partial", 2)
+        self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.bus = canbus
@@ -110,9 +110,9 @@ class Exoskeleton:
         self.currentState = self.states[0]
 
     def __init__(self):
-        self.modeFA = Mode("Full Assistance", 1)
-        self.modePA = Mode("Partial Assistance", 2)
-        self.modePR = Mode("Partial Resistance", 3)
+        self.modeFA = Mode("Full", 1)
+        self.modePA = Mode("Partial", 2)
+        self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.leftKnee = KneeMotor()
