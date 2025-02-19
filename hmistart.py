@@ -63,7 +63,7 @@ def run():
             comm_can_transmit_eid(*speed(exo.leftKnee.canbus, exo.leftKnee.speed*12))
             write_log(position)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0-(exo.leftKnee.speed*12)+1))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, exo.leftKnee.speed*12*-1))
             write_log(position)
         if exo.currentState == "started":
             
