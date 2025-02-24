@@ -82,7 +82,7 @@ slider_frame = tk.Frame(root)
 slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 
 mode_frame = tk.Frame(root)
-mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+mode_frame.place(relx=0.01, rely=0.05, relwidth=0.05, relheight=0.1)
 
 # Status frame with labels side by side
 status_frame = tk.Frame(root)
@@ -166,8 +166,16 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = [exo.modeFA, exo.modePA, exo.modePR]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 16), activebackground="green")
-    mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
+    mode_button = tk.Button(
+        mode_frame, 
+        text=mode.name, 
+        command=lambda m=mode.number: set_mode(m), 
+        height=10,  # Further increased height
+        width=1,  # Further increased width
+        font=("Arial", 36),  # Further increased font size
+        activebackground="green"
+    )
+    mode_button.pack(side="left", padx=5, pady=5, expand=True, fill="both")
     mode_buttons.append(mode_button)
 
 for i in range(len(modes)):
@@ -289,7 +297,8 @@ def update_button_colors():
 
 def update_visibility():
     global button_tank_frame, start_button, blank_tank
-    mode_frame.place(relx=0.05, rely=0.05, relwidth=0.25, relheight=0.1)
+    # Preserve the relwidth of mode_frame (0.45)
+    mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)  # Updated relwidth to 0.45
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
