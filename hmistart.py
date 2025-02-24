@@ -114,14 +114,14 @@ def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
 
 # Intensity tank
-intensity_label = tk.Label(slider_frame, text="Intensity")
+intensity_label = tk.Label(slider_frame, text="Intensity", font=("Arial", 17))
 intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
 intensity_tank.grid(row=1, column=0, padx=5, pady=5)
 
 # Height tank
-height_label = tk.Label(slider_frame, text="Height")
+height_label = tk.Label(slider_frame, text="Height", font=("Arial", 17))
 height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
 height_fill = height_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
@@ -138,7 +138,8 @@ intensity_slider = tk.Scale(
     width=80,    # Width of the slider (thickness)
     sliderlength=80,  # Length of the slider thumb
     troughcolor="lightgray",  # Color of the slider track
-    bg="lightgray"  # Background color of the slider
+    bg="lightgray",  # Background color of the slider
+    font=("Arial", 28)
 )
 intensity_slider.set(0)
 intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
@@ -154,7 +155,8 @@ height_slider = tk.Scale(
     width=80,    # Width of the slider (thickness)
     sliderlength=80,  # Length of the slider thumb
     troughcolor="lightgray",  # Color of the slider track
-    bg="lightgray"  # Background color of the slider
+    bg="lightgray",  # Background color of the slider
+    font=("Arial", 28)
 )
 height_slider.set(0)
 height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
