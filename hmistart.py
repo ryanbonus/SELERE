@@ -89,11 +89,12 @@ status_frame = tk.Frame(root)
 status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 # Adjusted width and font size for the status labels
-mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 28), relief="solid", width=7)
-mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
+# Commented out the mode and joint status labels
+# mode_status_label = tk.Label(status_frame, textvariable=selected_mode, font=("Arial", 28), relief="solid", width=7)
+# mode_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
-joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 28), relief="solid", width=14)
-joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
+# joint_status_label = tk.Label(status_frame, textvariable=selected_joint, font=("Arial", 28), relief="solid", width=14)
+# joint_status_label.pack(side="left", padx=5, pady=5, expand=True, fill="both")
 
 # Tab frame placement
 tab_frame = tk.Frame(root)
@@ -299,10 +300,6 @@ def update_button_colors():
 
 # Set initial button colors and visibility
 update_button_colors()
-
-
-
-
 
 def update_visibility():
     global button_tank_frame, start_button, blank_tank
