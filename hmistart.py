@@ -114,18 +114,68 @@ def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
 
 # Intensity tank
-intensity_label = tk.Label(slider_frame, text="Intensity", font=("Arial", 17))
-intensity_label.grid(row=0, column=0, padx=5, pady=5)
+#intensity_label = tk.Label(text="Intensity", font=("Arial", 20))
+#intensity_label.grid(row=0, column=0, padx=5, pady=5)
 intensity_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
 intensity_fill = intensity_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
 intensity_tank.grid(row=1, column=0, padx=5, pady=5)
 
 # Height tank
-height_label = tk.Label(slider_frame, text="Height", font=("Arial", 17))
-height_label.grid(row=0, column=2, padx=5, pady=5)
+#height_label = tk.Label(text="Height", font=("Arial", 17))
+#height_label.grid(row=0, column=2, padx=5, pady=5)
 height_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
 height_fill = height_tank.create_rectangle(slider_widths[0], slider_heights[0], slider_widths[1], slider_heights[0], fill="green")
 height_tank.grid(row=1, column=2, padx=5, pady=5)
+
+def create_text_box(parent, text, x, y, width, height, font_size):
+    """
+    Create a customizable text box.
+    
+    Args:
+        parent: The parent widget (e.g., root or another frame).
+        text: The default text to display in the box.
+        x: The x-coordinate for placement.
+        y: The y-coordinate for placement.
+        width: The width of the text box.
+        height: The height of the text box.
+        font_size: The font size of the text.
+    """
+    text_box = tk.Entry(
+        parent,
+        font=("Arial", font_size),
+        width=width,
+        justify="center",
+        bg="lightgray",
+        fg="black",
+        relief=tk.FLAT,  # Remove the border    
+        bd=2
+    )
+    text_box.insert(0, text)  # Set default text
+    text_box.place(x=x, y=y, width=width * 10, height=height * 20)  # Adjust width and height scaling as needed
+    return text_box
+
+# Create the Intensity text box
+intensity_text_box = create_text_box(
+    parent=root,  # Place in the main window
+    text="Intensity",
+    x=50,  # X-coordinate
+    y=100,  # Y-coordinate
+    width=23,  # Width of the text box
+    height=3,  # Height of the text box
+    font_size=35  # Font size
+)
+
+# Create the Height text box
+height_text_box = create_text_box(
+    parent=root,  # Place in the main window
+    text="Height",
+    x=250,  # X-coordinate
+    y=150,  # Y-coordinate
+    width=20,  # Width of the text box
+    height=3,  # Height of the text box
+    font_size=35  # Font size
+)
+
 
 # Intensity slider (using tk.Scale)
 intensity_slider = tk.Scale(
@@ -314,6 +364,9 @@ def update_visibility():
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         doc_button_frame.place_forget()  # Hide DOC buttons
         new_button_frame.place_forget()  # Hide new buttons
+        # Explicitly place the text boxes with correct coordinates
+        intensity_text_box.place(x=100, y=230, width=230, height=60)  # Show Intensity text box
+        height_text_box.place(x=350, y=230, width=200, height=60)  # Show Height text box
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
@@ -327,6 +380,8 @@ def update_visibility():
         slider_frame.place_forget()
         doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
         new_button_frame.place(relx=0.025, rely=0.65, relwidth=0.4, relheight=0.2)  # Adjusted rely and relwidth for new buttons
+        intensity_text_box.place_forget()  # Hide Intensity text box
+        height_text_box.place_forget()  # Hide Height text box
         try:
             button_tank_frame.place_forget()
         except NameError:
@@ -336,6 +391,8 @@ def update_visibility():
         slider_frame.place_forget()
         doc_button_frame.place_forget()  # Hide DOC buttons
         new_button_frame.place_forget()  # Hide new buttons
+        intensity_text_box.place_forget()  # Hide Intensity text box
+        height_text_box.place_forget()  # Hide Height text box
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
