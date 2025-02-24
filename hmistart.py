@@ -285,14 +285,23 @@ for i in range(2):
 
 # Function to update button colors based on selection
 def update_button_colors():
+    # Update mode buttons
     for button, mode in zip(mode_buttons, modes):
-        button.config(bg="green" if mode == selected_mode.get() else root.cget("bg"))
+        button.config(bg="green" if f"Mode {mode.number}" == selected_mode.get() else root.cget("bg"))
 
+    # Update joint buttons
     for button, joint in zip(joint_buttons, joints):
         button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
 
+    # Update tab buttons
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
+
+# Set initial button colors and visibility
+update_button_colors()
+
+
+
 
 
 def update_visibility():
