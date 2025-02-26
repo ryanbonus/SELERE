@@ -11,10 +11,13 @@ class KneeMotor:
         self.temp = 0
         self.errorCode=0
         self.torque = 0
-        self.rangeOfMotionTop = 6553.5
+        self.rangeOfMotionTop = 0
         self.rangeOfMotionBottom = 20
         self.canbus = 0
         self.direction = 1
+        self.desSpd = 0
+        self.maxSpd = 1250
+        self.maxHeight = 1000
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -51,6 +54,12 @@ class KneeMotor:
 
     def getPosition(self):
         return self.position 
+    
+    def getSpeed(self):
+        return self.speed
+
+    def getDesSpeed(self):
+        return self.desSpd
 
 
 

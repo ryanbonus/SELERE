@@ -54,16 +54,16 @@ def start_button_pressed(*args):
 def run():
     if exo.currentMode.name == "Full Assistance":
         position = exo.leftKnee.getPosition()
+        desSpd = exo.leftKnee.getDesSpeed()
         if position > exo.leftKnee.rangeOfMotionTop:
             exo.leftKnee.direction = 0
         if position < exo.leftKnee.rangeOfMotionBottom:
             exo.leftKnee.direction = 1
         if exo.leftKnee.direction == 0:
-            print(exo.leftKnee.speed)
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, exo.leftKnee.speed*12))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, desSpd))
             write_log(position)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, exo.leftKnee.speed*12*-1))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -desSpd))
             write_log(position)
         if exo.currentState == "started":
             
@@ -110,12 +110,13 @@ slider_widths = (0, 50)
 
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
-    exo.leftKnee.speed = val #Variable speed
-    write_log(f"Knee speed set to {exo.leftKnee.speed}")
+    exo.leftKnee.desSpd = (int(float(val))/100)*exo.leftKnee.maxSpd
+
 
 def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    
+    exo.leftKnee.rangeOfMotionTop = (int(float(val))/100)*exo.leftKnee.maxHeight
+
 # Intensity tank
 intensity_label = tk.Label(slider_frame, text="Intensity")
 intensity_label.grid(row=0, column=0, padx=5, pady=5)
