@@ -378,8 +378,8 @@ def update_visibility():
     elif selected_tab.get() == "DOC":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-        doc_button_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.2)  # Show DOC buttons
-        new_button_frame.place(relx=0.025, rely=0.65, relwidth=0.4, relheight=0.2)  # Adjusted rely and relwidth for new buttons
+        doc_button_frame.place(relx=0.025, rely=0.225, relwidth=0.35, relheight=0.35)  # Show DOC buttons
+        new_button_frame.place(relx=0.025, rely=0.625, relwidth=0.35, relheight=0.35)  # Adjusted rely and relwidth for new buttons
         intensity_text_box.place_forget()  # Hide Intensity text box
         height_text_box.place_forget()  # Hide Height text box
         try:
@@ -432,7 +432,7 @@ buttons = [
 
 # Place the buttons in 2 rows and 3 columns
 for idx, (text, command) in enumerate(buttons):
-    button = tk.Button(new_button_frame, text=text, command=command, height=2, width=10, font=("Arial", 24), activebackground="green")  # Adjusted width to 10
+    button = tk.Button(new_button_frame, text=text, command=command, height=4, width=10, font=("Arial", 24), activebackground="green")  # Adjusted width to 10
     button.grid(row=idx // 3, column=idx % 3, padx=5, pady=5)
 
 # Set initial button colors and visibility
