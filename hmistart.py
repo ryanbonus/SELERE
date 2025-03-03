@@ -22,7 +22,7 @@ def set_mode(mode):
         update_button_colors()
         if mode in exo.modes:
             print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
-            exo.currentMode = exo.modes[mode-1] 
+            exo.currentMode = exo.modes[mode.number-1] 
         else:
             print(f"Mode {mode} does not exist")
 
@@ -69,7 +69,13 @@ def run():
             
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0)) 
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0))
+    if exo.currentMode.name == "Partial Assistance":
+        if exo.currentState == "started":
+            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 2))
+            root.after(1, run)
+        else:
+            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0))
     
 
 def start_button_released(*args):
@@ -145,7 +151,7 @@ slider_frame.grid_rowconfigure(1, weight=1)
 mode_buttons = []
 modes = [exo.modeFA, exo.modePA, exo.modePR]
 for idx, mode in enumerate(modes):
-    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode.number: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
+    mode_button = tk.Button(mode_frame, text=mode.name, command=lambda m=mode: set_mode(m), height=3, width=15, font=("Arial", 28), activebackground="green")
     mode_button.grid(row=0, column=idx, padx=5, pady=5, sticky="nsew")
     mode_buttons.append(mode_button)
 
