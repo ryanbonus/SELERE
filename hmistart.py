@@ -40,14 +40,14 @@ settings = {
 
 # Function to set the mode
 def set_mode(mode):
-    if exo.currentMode.number != mode:  # Only change if it's different
+    if exo.currentMode.number != mode.number:  # Only change if it's different
         selected_mode.set(mode)
         update_button_colors()
         if mode in exo.modes:
             print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
             exo.currentMode = exo.modes[mode.number-1] 
         else:
-            print(f"Mode {mode_name} does not exist")
+            print(f"Mode {mode.name} does not exist")
         update_button_labels()  # Update the button labels to reflect the new mode's settings
 
 def switch_tab(tab):
@@ -331,10 +331,10 @@ doc_button_frame.grid_columnconfigure(1, weight=1)
 def update_button_labels():
     mode = selected_mode.get()
     joint = selected_joint.get()
-    max_intensity_var.set(f"Max Intensity\n{settings[mode][joint]['max_intensity']}")
-    min_intensity_var.set(f"Min Intensity\n{settings[mode][joint]['min_intensity']}")
-    max_height_var.set(f"Max Height\n{settings[mode][joint]['max_height']}")
-    min_height_var.set(f"Min Height\n{settings[mode][joint]['min_height']}")
+    max_intensity_var.set(f"Max Intensity\n{settings[mode.name][joint]['max_intensity']}")
+    min_intensity_var.set(f"Min Intensity\n{settings[mode.name][joint]['min_intensity']}")
+    max_height_var.set(f"Max Height\n{settings[mode.name][joint]['max_height']}")
+    min_height_var.set(f"Min Height\n{settings[mode.name][joint]['min_height']}")
 
 # Function to handle button selection
 def select_doc_button(label):
