@@ -94,13 +94,18 @@ def run():
             root.after(1, run)
         else:
             comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0))
-    if exo.currentMode.name == "Partial":
+    if exo.currentMode.name == "Partial Assistance" or "Resistance":
         desCurrent = exo.leftKnee.getDesCurrent()
         if exo.currentState == "started":
-            comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent))
+            if exo.currentMode.name == "Partial Assistance":
+                comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent))
+            if exo.currentMode.name == "Resistance":
+                comm_can_transmit_eid(*current(exo.leftKnee.canbus, -desCurrent))
             root.after(1, run)
         else:
             comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0))
+
+
     
 
 def start_button_released(*args):
