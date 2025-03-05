@@ -11,26 +11,26 @@ root.configure(bg="lightgray")
 exo = Exoskeleton()
 
 # Variables to track selected mode, joint, tab, and DOC button
-selected_mode = tk.StringVar(value="Mode 1")
+selected_mode = tk.StringVar(value="Full")
 selected_joint = tk.StringVar(value="Left Knee")
 selected_tab = tk.StringVar(value="Edit")
 selected_doc_button = tk.StringVar(value="Max Intensity")  # Add this line
 
 # Dictionary to store settings for each mode and joint
 settings = {
-    "Mode 1": {
+    "Full": {
         "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
     },
-    "Mode 2": {
+    "Partial": {
         "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
     },
-    "Mode 3": {
+    "Resistance": {
         "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
         "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
@@ -41,10 +41,10 @@ settings = {
 # Function to set the mode
 def set_mode(mode):
     if exo.currentMode.number != mode.number:  # Only change if it's different
-        selected_mode.set(mode)
+        selected_mode.set(mode.name)
         update_button_colors()
         if mode in exo.modes:
-            print(f"Mode set to: {mode}") #Todo, fix mode validation with new objects
+            print(f"Mode set to: {mode.name}") #Todo, fix mode validation with new objects
             exo.currentMode = exo.modes[mode.number-1] 
         else:
             print(f"Mode {mode.name} does not exist")
@@ -76,7 +76,7 @@ def start_button_pressed(*args):
         run()
 
 def run():
-    if exo.currentMode.name == "Full Assistance":
+    if exo.currentMode.name == "Full":
         position = exo.leftKnee.getPosition()
         desSpd = exo.leftKnee.getDesSpeed()
         if position > exo.leftKnee.rangeOfMotionTop:
@@ -94,7 +94,7 @@ def run():
             root.after(1, run)
         else:
             comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0))
-    if exo.currentMode.name == "Partial Assistance":
+    if exo.currentMode.name == "Partial":
         desCurrent = exo.leftKnee.getDesCurrent()
         if exo.currentState == "started":
             comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent))
@@ -331,10 +331,10 @@ doc_button_frame.grid_columnconfigure(1, weight=1)
 def update_button_labels():
     mode = selected_mode.get()
     joint = selected_joint.get()
-    max_intensity_var.set(f"Max Intensity\n{settings[mode.name][joint]['max_intensity']}")
-    min_intensity_var.set(f"Min Intensity\n{settings[mode.name][joint]['min_intensity']}")
-    max_height_var.set(f"Max Height\n{settings[mode.name][joint]['max_height']}")
-    min_height_var.set(f"Min Height\n{settings[mode.name][joint]['min_height']}")
+    max_intensity_var.set(f"Max Intensity\n{settings[mode][joint]['max_intensity']}")
+    min_intensity_var.set(f"Min Intensity\n{settings[mode][joint]['min_intensity']}")
+    max_height_var.set(f"Max Height\n{settings[mode][joint]['max_height']}")
+    min_height_var.set(f"Min Height\n{settings[mode][joint]['min_height']}")
 
 # Function to handle button selection
 def select_doc_button(label):
@@ -376,7 +376,7 @@ for i in range(2):
 def update_button_colors():
     # Update mode buttons
     for button, mode in zip(mode_buttons, modes):
-        button.config(bg="green" if f"Mode {mode.number}" == selected_mode.get() else root.cget("bg"))
+        button.config(bg="green" if f"{mode.name}" == selected_mode.get() else root.cget("bg"))
 
     # Update joint buttons
     for button, joint in zip(joint_buttons, joints):
