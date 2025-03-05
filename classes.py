@@ -18,6 +18,8 @@ class KneeMotor:
         self.desSpd = 0
         self.maxSpd = 1250
         self.maxHeight = 1000
+        self.maxCurrent = 5
+        self.desCurrent = 0
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -61,6 +63,8 @@ class KneeMotor:
     def getDesSpeed(self):
         return self.desSpd
 
+    def getDesCurrent(self):
+        return self.desCurrent
 
 
 # Class for Ankle Motor

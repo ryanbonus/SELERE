@@ -71,8 +71,9 @@ def run():
         else:
             comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0))
     if exo.currentMode.name == "Partial Assistance":
+        desCurrent = exo.leftKnee.getDesCurrent()
         if exo.currentState == "started":
-            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 2))
+            comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent))
             root.after(1, run)
         else:
             comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0))
@@ -117,6 +118,7 @@ slider_widths = (0, 50)
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
     exo.leftKnee.desSpd = (int(float(val))/100)*exo.leftKnee.maxSpd
+    exo.leftKnee.desCurrent = (int(float(val))/100)*exo.leftKnee.maxCurrent
 
 
 def update_height(val):
