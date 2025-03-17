@@ -84,26 +84,26 @@ def run():
         if position < exo.leftKnee.rangeOfMotionBottom:
             exo.leftKnee.direction = 1
         if exo.leftKnee.direction == 0:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, desSpd))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, desSpd, controller_id=exo.currentJoint.id))
             write_log(position)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -desSpd))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -desSpd, controller_id=exo.currentJoint.id))
             write_log(position)
         if exo.currentState == "started":
             
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0))
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.id))
     if exo.currentMode.name == "Partial" or "Resistance":
         desCurrent = exo.leftKnee.getDesCurrent()
         if exo.currentState == "started":
             if exo.currentMode.name == "Partial":
-                comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent))
+                comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent, controller_id=exo.currentJoint.id))
             if exo.currentMode.name == "Resistance":
-                comm_can_transmit_eid(*current(exo.leftKnee.canbus, -desCurrent))
+                comm_can_transmit_eid(*current(exo.leftKnee.canbus, -desCurrent, controller_id=exo.currentJoint.id))
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0))
+            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.id))
 
 
     
@@ -481,5 +481,5 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-components = [exo.leftKnee, exo.leftAnkle]
+components = [exo.leftKnee, exo.rightKnee]
 start_can(components, tkinter_loop, root.mainloop)

@@ -2,7 +2,7 @@ import numpy as np
 
 #Motor parameters
 BITRATE = 500000
-CONTROLLER_ID = 0
+CONTROLLER_ID = 1
 
 # CAN packet definitions
 CAN_PACKET_SET_DUTY = 0
