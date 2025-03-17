@@ -4,23 +4,22 @@ import kneeMotor.motorControl
 
 # Class for Knee Motor
 class KneeMotor:
-    def __init__(self, canbus):
-        self.position = 0
-        self.speed = 0
-        self.acceleration = 0
-        self.torque = 0
-        self.rangeOfMotionTop = 45
-        self.rangeOfMotionBottom = 0
-        self.canbus = canbus
-        self.id = 0
-
     def __init__(self):
         self.position = 0
         self.speed = 0
-        self.acceleration = 0
+        self.current = 0
+        self.temp = 0
+        self.errorCode=0
         self.torque = 0
-        self.rangeOfMotionTop = 45
-        self.rangeOfMotionBottom = 0
+        self.rangeOfMotionTop = 0
+        self.rangeOfMotionBottom = 20
+        self.canbus = 0
+        self.direction = 1
+        self.desSpd = 0
+        self.maxSpd = 1250
+        self.maxHeight = 1000
+        self.maxCurrent = 5
+        self.desCurrent = 0
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -55,6 +54,17 @@ class KneeMotor:
         kneeMotor.motorControl.current(self.canbus, torque)
         kneeMotor.motorCAN.write_log("Resisting Knee with Torque:", torque)
 
+    def getPosition(self):
+        return self.position 
+    
+    def getSpeed(self):
+        return self.speed
+
+    def getDesSpeed(self):
+        return self.desSpd
+
+    def getDesCurrent(self):
+        return self.desCurrent
 
 
 # Class for Ankle Motor
@@ -64,8 +74,9 @@ class AnkleMotor:
         self.speed = 0
         self.acceleration = 0
         self.torque = 0
-        self.rangeOfMotionTop = 100
+        self.rangeOfMotionTop = 655
         self.rangeOfMotionBottom = 0
+        self.direction = 1
 
     def extend(self, rangeOfMotionTop, rangeOfMotionBottom, speed, acceleration):
         self.rangeOfMotionTop = rangeOfMotionTop
@@ -91,7 +102,10 @@ class AnkleMotor:
 
     def resist(self, torque):
         self.torque = torque
-        print("Resisting Ankle with Torque:", torque)     
+        print("Resisting Ankle with Torque:", torque)
+
+    def getPosition(self):
+        return self.position     
         
 
 # Exoskeleton Class containing modes and motors
@@ -102,10 +116,10 @@ class Exoskeleton:
         self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.bus = canbus
+        self.canbus = canbus
         self.leftKnee = KneeMotor(self.Bus)
         self.leftAnkle = AnkleMotor(self.Bus)
-        self.joints = (self.leftKnee, self.leftAnkle, self.rightKnee, self.rightAnkle)
+        self.joints = (self.leftKnee, self.leftAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]
@@ -116,12 +130,16 @@ class Exoskeleton:
         self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
+        self.canbus = 0
         self.leftKnee = KneeMotor()
         self.leftAnkle = AnkleMotor()
-        self.joints = (self.leftKnee, self.leftAnkle, self.rightKnee, self.rightAnkle)
+        self.rightKnee = KneeMotor()
+        self.joints = (self.leftKnee, self.leftAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]
+
+        
 
 
 
