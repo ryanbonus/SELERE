@@ -20,6 +20,7 @@ class KneeMotor:
         self.maxHeight = 1000
         self.maxCurrent = 5
         self.desCurrent = 0
+        self.id = 0
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -134,7 +135,8 @@ class Exoskeleton:
         self.leftKnee = KneeMotor()
         self.leftAnkle = AnkleMotor()
         self.rightKnee = KneeMotor()
-        self.joints = (self.leftKnee, self.leftAnkle)
+        self.rightAnkle = AnkleMotor()
+        self.joints = (self.leftKnee, self.leftAnkle, self.rightKnee, self.rightAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]
