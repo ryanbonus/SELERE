@@ -66,7 +66,6 @@ def comm_can_transmit_eid(bus, eid, data):
     # Send the message
     try:
         bus.send(message)
-        print("Message sent on CAN bus")
     except can.CanError as e:
         print(f"Error sending message: {e}")
 
