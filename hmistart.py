@@ -11,8 +11,8 @@ root.configure(bg="lightgray")
 exo = Exoskeleton()
 
 # Variables to track selected mode, joint, tab, and DOC button
-selected_mode = tk.StringVar(value="Full")
-selected_joint = tk.StringVar(value="Left Knee")
+selected_mode = tk.StringVar(value=exo.currentMode.name)
+selected_joint = tk.StringVar(value=exo.currentJoint.name)
 selected_tab = tk.StringVar(value="Edit")
 selected_doc_button = tk.StringVar(value="Max Intensity")  # Add this line
 
@@ -58,14 +58,14 @@ def switch_tab(tab):
         print(f"Switched to {tab} tab")
 
 def control_joint(joint):
-    if selected_joint.get() != joint:  # Only change if it's different
-        selected_joint.set(joint)
+    if selected_joint.get() != joint.name:  # Only change if it's different
+        selected_joint.set(joint.name)
         update_button_colors()
-        print(f"Controlling {joint}")
+        print(f"Controlling {joint.name}")
         if joint in exo.joints:
             exo.currentJoint = joint
         else:
-            print(f"Joint {joint} does not exist")
+            print(f"Joint {joint.name} does not exist")
         update_button_labels()  # Update labels when joint changes
 
 # Function for Start button
