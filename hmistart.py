@@ -48,7 +48,9 @@ def set_mode(mode):
             exo.currentMode = exo.modes[mode.number-1] 
         else:
             print(f"Mode {mode.name} does not exist")
-        update_button_labels()  # Update the button labels to reflect the new mode's settings
+        
+        update_sliders()  # Restore saved slider values
+        update_button_labels()  # Update button labels
 
 def switch_tab(tab):
     if selected_tab.get() != tab:  # Only change if it's different
@@ -66,6 +68,8 @@ def control_joint(joint):
             exo.currentJoint = joint
         else:
             print(f"Joint {joint.name} does not exist")
+
+        update_sliders()  # Restore saved slider values
         update_button_labels()  # Update labels when joint changes
 
 # Function for Start button
@@ -141,15 +145,41 @@ joint_frame.place(relx=-.4, rely=0.3, relwidth=0.55, relheight=0.55)
 slider_heights = (0, 650)  # Change these values to modify the min and max values of the height and intensity sliders
 slider_widths = (0, 100)  # Increased width from 50 to 100
 
+def update_sliders():
+    mode = selected_mode.get()
+    joint = selected_joint.get()
+
+    # Restore saved values from settings
+    intensity_value = settings[mode][joint]["max_intensity"]
+    height_value = settings[mode][joint]["max_height"]
+
+    # Update the sliders with the saved values
+    intensity_slider.set(intensity_value)
+    height_slider.set(height_value)
+
+
+
 def update_intensity(val):
+    mode = selected_mode.get()
+    joint = selected_joint.get()
+    
+    # Store the value in settings
+    settings[mode][joint]["max_intensity"] = int(float(val))
+    
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
-    exo.currentJoint.desSpd = (int(float(val))/100)*exo.currentJoint.maxSpd
-    exo.currentJoint.desCurrent = (int(float(val))/100)*exo.currentJoint.maxCurrent
+    exo.currentJoint.desSpd = (int(float(val)) / 100) * exo.currentJoint.maxSpd
+    exo.currentJoint.desCurrent = (int(float(val)) / 100) * exo.currentJoint.maxCurrent
 
 
 def update_height(val):
+    mode = selected_mode.get()
+    joint = selected_joint.get()
+
+    # Store the value in settings
+    settings[mode][joint]["max_height"] = int(float(val))
+
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    exo.currentJoint.rangeOfMotionTop = (int(float(val))/100)*exo.currentJoint.maxHeight
+    exo.currentJoint.rangeOfMotionTop = (int(float(val)) / 100) * exo.currentJoint.maxHeight
 
 # Intensity tank
 #intensity_label = tk.Label(text="Intensity", font=("Arial", 20))
@@ -215,6 +245,7 @@ height_text_box = create_text_box(
 )
 
 
+
 # Intensity slider (using tk.Scale)
 intensity_slider = tk.Scale(
     slider_frame, 
@@ -229,7 +260,7 @@ intensity_slider = tk.Scale(
     bg="lightgray",  # Background color of the slider
     font=("Arial", 28)
 )
-intensity_slider.set(0)
+intensity_slider.set(0)  # Set initial value to 0
 intensity_slider.grid(row=1, column=1, padx=5, pady=5, sticky="ns")
 
 # Height slider (using tk.Scale)
@@ -246,7 +277,7 @@ height_slider = tk.Scale(
     bg="lightgray",  # Background color of the slider
     font=("Arial", 28)
 )
-height_slider.set(0)
+height_slider.set(0)  # Set initial value to 0
 height_slider.grid(row=1, column=3, padx=5, pady=5, sticky="ns")
 
 for i in range(4):
