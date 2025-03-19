@@ -62,7 +62,7 @@ def switch_tab(tab):
 def control_joint(joint):
     if selected_joint.get() != joint.name:  # Only change if it's different
         selected_joint.set(joint.name)
-        update_button_colors()
+        update_button_colors()  # Update button colors
         print(f"Controlling {joint.name}")
         if joint in exo.joints:
             exo.currentJoint = joint
@@ -409,16 +409,15 @@ for i in range(2):
 def update_button_colors():
     # Update mode buttons
     for button, mode in zip(mode_buttons, modes):
-        button.config(bg="green" if f"{mode.name}" == selected_mode.get() else root.cget("bg"))
+        button.config(bg="green" if mode.name == selected_mode.get() else root.cget("bg"))
 
     # Update joint buttons
     for button, joint in zip(joint_buttons, joints):
-        button.config(bg="green" if joint == selected_joint.get() else root.cget("bg"))
+        button.config(bg="green" if joint.name == selected_joint.get() else root.cget("bg"))
 
     # Update tab buttons
     for button, tab in zip(tab_buttons, tabs):
         button.config(bg="green" if tab == selected_tab.get() else root.cget("bg"))
-
 # Set initial button colors and visibility
 update_button_colors()
 
@@ -511,3 +510,4 @@ update_visibility()
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
 start_can(components, tkinter_loop, root.mainloop)
+                                                                                                                                                                                                
