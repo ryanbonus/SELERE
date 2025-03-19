@@ -85,10 +85,10 @@ def run():
             exo.currentJoint.direction = 1
         if exo.currentJoint.direction == 0:
             comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
-            write_log(position)
+            #write_log(position)
         else:
             comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
-            write_log(position)
+            #write_log(position)
         if exo.currentState == "started":
             
             root.after(1, run)
