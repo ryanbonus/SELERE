@@ -76,33 +76,31 @@ def start_button_pressed(*args):
         run()
 
 def run():
-    if exo.currentMode.name == "Full":
-        position = exo.currentJoint.getPosition()
-        desSpd = exo.currentJoint.getDesSpeed()
-        if position > exo.currentJoint.rangeOfMotionTop:
-            exo.currentJoint.direction = 0
-        if position < exo.currentJoint.rangeOfMotionBottom:
-            exo.currentJoint.direction = 1
-        if exo.currentJoint.direction == 0:
-            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
-            #write_log(position)
-        else:
-            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
-            #write_log(position)
-        if exo.currentState == "started":
-            root.after(1, run)
-        else:
-            comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
-    if exo.currentMode.name == "Partial" or "Resistance":
-        desCurrent = exo.currentJoint.getDesCurrent()
-        if exo.currentState == "started":
-            if exo.currentMode.name == "Partial":
-                comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent, controller_id=exo.currentJoint.id))
-            if exo.currentMode.name == "Resistance":
-                comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent, controller_id=exo.currentJoint.id))
-            root.after(1, run)
-        else:
-            comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
+    if exo.currentState == "started":
+        if exo.currentMode.name == "Full":
+            position = exo.currentJoint.getPosition()
+            desSpd = exo.currentJoint.getDesSpeed()
+            if position > exo.currentJoint.rangeOfMotionTop:
+                exo.currentJoint.direction = 0
+            if position < exo.currentJoint.rangeOfMotionBottom:
+                exo.currentJoint.direction = 1
+            if exo.currentJoint.direction == 0:
+                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
+                #write_log(position)
+            else:
+                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
+                #write_log(position)
+
+        if exo.currentMode.name == "Partial" or "Resistance":
+            desCurrent = exo.currentJoint.getDesCurrent()
+            if exo.currentState == "started":
+                if exo.currentMode.name == "Partial":
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent, controller_id=exo.currentJoint.id))
+                if exo.currentMode.name == "Resistance":
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent, controller_id=exo.currentJoint.id))
+        root.after(1, run)
+    else:
+        comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
 
 
     
