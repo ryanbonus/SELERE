@@ -90,10 +90,9 @@ def run():
             comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
             #write_log(position)
         if exo.currentState == "started":
-            
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
+            comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
     if exo.currentMode.name == "Partial" or "Resistance":
         desCurrent = exo.currentJoint.getDesCurrent()
         if exo.currentState == "started":
