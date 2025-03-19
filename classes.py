@@ -4,7 +4,7 @@ import kneeMotor.motorControl
 
 # Class for Knee Motor
 class KneeMotor:
-    def __init__(self):
+    def __init__(self, id, name):
         self.position = 0
         self.speed = 0
         self.current = 0
@@ -20,6 +20,8 @@ class KneeMotor:
         self.maxHeight = 1000
         self.maxCurrent = 5
         self.desCurrent = 0
+        self.id = id
+        self.name = name
 
     def extend(self, rangeOfMotionTop, desiredPosition, desiredSpeed, desiredAcceleration):
         #self.rangeOfMotionTop = rangeOfMotionTop
@@ -69,14 +71,24 @@ class KneeMotor:
 
 # Class for Ankle Motor
 class AnkleMotor:
-    def __init__(self):
+    def __init__(self, id, name):
         self.position = 0
         self.speed = 0
-        self.acceleration = 0
+        self.current = 0
+        self.temp = 0
+        self.errorCode=0
         self.torque = 0
-        self.rangeOfMotionTop = 655
-        self.rangeOfMotionBottom = 0
+        self.rangeOfMotionTop = 0
+        self.rangeOfMotionBottom = 20
+        self.canbus = 0
         self.direction = 1
+        self.desSpd = 0
+        self.maxSpd = 1250
+        self.maxHeight = 1000
+        self.maxCurrent = 5
+        self.desCurrent = 0
+        self.id = id
+        self.name = name
 
     def extend(self, rangeOfMotionTop, rangeOfMotionBottom, speed, acceleration):
         self.rangeOfMotionTop = rangeOfMotionTop
@@ -131,10 +143,11 @@ class Exoskeleton:
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.canbus = 0
-        self.leftKnee = KneeMotor()
-        self.leftAnkle = AnkleMotor()
-        self.rightKnee = KneeMotor()
-        self.joints = (self.leftKnee, self.leftAnkle)
+        self.leftKnee = KneeMotor(0, "Left Knee")
+        self.leftAnkle = AnkleMotor(2, "Left Ankle")
+        self.rightKnee = KneeMotor(1, "Right Knee")
+        self.rightAnkle = AnkleMotor(3, "Right Ankle")
+        self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]

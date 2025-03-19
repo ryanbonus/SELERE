@@ -77,33 +77,33 @@ def start_button_pressed(*args):
 
 def run():
     if exo.currentMode.name == "Full":
-        position = exo.leftKnee.getPosition()
-        desSpd = exo.leftKnee.getDesSpeed()
-        if position > exo.leftKnee.rangeOfMotionTop:
-            exo.leftKnee.direction = 0
-        if position < exo.leftKnee.rangeOfMotionBottom:
-            exo.leftKnee.direction = 1
-        if exo.leftKnee.direction == 0:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, desSpd, controller_id=exo.currentJoint.id))
+        position = exo.currentJoint.getPosition()
+        desSpd = exo.currentJoint.getDesSpeed()
+        if position > exo.currentJoint.rangeOfMotionTop:
+            exo.currentJoint.direction = 0
+        if position < exo.currentJoint.rangeOfMotionBottom:
+            exo.currentJoint.direction = 1
+        if exo.currentJoint.direction == 0:
+            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
             write_log(position)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, -desSpd, controller_id=exo.currentJoint.id))
+            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
             write_log(position)
         if exo.currentState == "started":
             
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.id))
+            comm_can_transmit_eid(*speed(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
     if exo.currentMode.name == "Partial" or "Resistance":
-        desCurrent = exo.leftKnee.getDesCurrent()
+        desCurrent = exo.currentJoint.getDesCurrent()
         if exo.currentState == "started":
             if exo.currentMode.name == "Partial":
-                comm_can_transmit_eid(*current(exo.leftKnee.canbus, desCurrent, controller_id=exo.currentJoint.id))
+                comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent, controller_id=exo.currentJoint.id))
             if exo.currentMode.name == "Resistance":
-                comm_can_transmit_eid(*current(exo.leftKnee.canbus, -desCurrent, controller_id=exo.currentJoint.id))
+                comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent, controller_id=exo.currentJoint.id))
             root.after(1, run)
         else:
-            comm_can_transmit_eid(*current(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.id))
+            comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
 
 
     
@@ -146,13 +146,13 @@ slider_widths = (0, 100)  # Increased width from 50 to 100
 
 def update_intensity(val):
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
-    exo.leftKnee.desSpd = (int(float(val))/100)*exo.leftKnee.maxSpd
-    exo.leftKnee.desCurrent = (int(float(val))/100)*exo.leftKnee.maxCurrent
+    exo.currentJoint.desSpd = (int(float(val))/100)*exo.currentJoint.maxSpd
+    exo.currentJoint.desCurrent = (int(float(val))/100)*exo.currentJoint.maxCurrent
 
 
 def update_height(val):
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    exo.leftKnee.rangeOfMotionTop = (int(float(val))/100)*exo.leftKnee.maxHeight
+    exo.currentJoint.rangeOfMotionTop = (int(float(val))/100)*exo.currentJoint.maxHeight
 
 # Intensity tank
 #intensity_label = tk.Label(text="Intensity", font=("Arial", 20))
@@ -294,10 +294,10 @@ for tab in tabs:
 
 # Joint control buttons (adjusted height/width for larger boxes)
 joint_buttons = []
-joints = [exo.leftKnee, "Left Ankle", exo.rightKnee, "Right Ankle"]
+joints = [exo.leftKnee, exo.leftAnkle, exo.rightKnee, exo.rightAnkle]
 row, col = 0, 0
 for joint in joints:
-    joint_button = tk.Button(joint_frame, text=joint, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 50), activebackground="green")
+    joint_button = tk.Button(joint_frame, text=joint.name, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 50), activebackground="green")
     joint_button.grid(row=row, column=col, padx=20, pady=20, sticky="nsew")
     joint_buttons.append(joint_button)
     col += 1

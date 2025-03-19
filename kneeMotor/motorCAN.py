@@ -7,6 +7,8 @@ from kneeMotor.motorControl import set_origin
 
 #Motor parameters
 BITRATE = 500000
+LEFT_KNEE_ID = 0x2900
+RIGHT_KNEE_ID = 0x2901
 
 def write_log(log_text, log_dir="logs"):
     #print(log_text)  #for live debugging
@@ -28,20 +30,25 @@ def write_log(log_text, log_dir="logs"):
 
 def can_handler_thread(bus, jointMotors):
     #Continuously receive CAN messages and write them to log files
+    jointIndex = 0
     while True:
-        msg = bus.recv()  # Wait for a new message
-        
+        msg = bus.recv()  # Wait for a new message        
         if msg:
+            #print(msg.arbitration_id)
+            if msg.arbitration_id == LEFT_KNEE_ID: #0x2900 is the ID of the left Knee motor
+                jointIndex = 0
+            if msg.arbitration_id == RIGHT_KNEE_ID: #0x2900 is the ID of the right Knee motor
+                jointIndex = 1
             try:
-                jointMotors[0].position = (msg.data[0]<<8)+msg.data[1]
-                jointMotors[0].speed = (msg.data[2]<<8)+msg.data[3]
-                jointMotors[0].current = (msg.data[4]<<8)+msg.data[5]
-                jointMotors[0].temp = msg.data[6]
-                jointMotors[0].errorCode = msg.data[7]
+                jointMotors[jointIndex].position = (msg.data[0]<<8)+msg.data[1]
+                jointMotors[jointIndex].speed = (msg.data[2]<<8)+msg.data[3]
+                jointMotors[jointIndex].current = (msg.data[4]<<8)+msg.data[5]
+                jointMotors[jointIndex].temp = msg.data[6]
+                jointMotors[jointIndex].errorCode = msg.data[7]
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")
 
-            #write_log(msg)
+            write_log(msg)
 
 
 def comm_can_transmit_eid(bus, eid, data):
