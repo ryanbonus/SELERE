@@ -48,7 +48,7 @@ def can_handler_thread(bus, jointMotors):
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")
 
-            write_log(msg)
+            #write_log(msg)
 
 
 def comm_can_transmit_eid(bus, eid, data):
@@ -77,8 +77,7 @@ def demo_event_loop(canBus):
 def tkinter_loop(jointMotors, canBus, tkLoop):
     for component in jointMotors:
         component.canbus = canBus
-    
-    comm_can_transmit_eid(*set_origin(canBus, 0))
+        comm_can_transmit_eid(*set_origin(canBus, 0, controller_id=component.id))
     tkLoop()
 
 def start_can(jointMotors, eventLoop, event):
