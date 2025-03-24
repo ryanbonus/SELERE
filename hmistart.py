@@ -19,22 +19,22 @@ selected_doc_button = tk.StringVar(value="Max Intensity")  # Add this line
 # Dictionary to store settings for each mode and joint
 settings = {
     "Full": {
-        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
     },
     "Partial": {
-        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
     },
     "Resistance": {
-        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
-        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0},
+        "Left Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Left Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
+        "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
     },
 }
 
@@ -150,12 +150,13 @@ def update_sliders():
     joint = selected_joint.get()
 
     # Restore saved values from settings
-    intensity_value = settings[mode][joint]["max_intensity"]
-    height_value = settings[mode][joint]["max_height"]
+    intensity_value = settings[mode][joint]["current_intensity"]
+    height_value = settings[mode][joint]["current_height"]
 
     # Update the sliders with the saved values
     intensity_slider.set(intensity_value)
     height_slider.set(height_value)
+
 
 
 
@@ -164,7 +165,7 @@ def update_intensity(val):
     joint = selected_joint.get()
     
     # Store the value in settings
-    settings[mode][joint]["max_intensity"] = int(float(val))
+    settings[mode][joint]["current_intensity"] = int(float(val))
     
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
     exo.currentJoint.desSpd = (int(float(val)) / 100) * exo.currentJoint.maxSpd
@@ -176,7 +177,7 @@ def update_height(val):
     joint = selected_joint.get()
 
     # Store the value in settings
-    settings[mode][joint]["max_height"] = int(float(val))
+    settings[mode][joint]["current_height"] = int(float(val))
 
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
     exo.currentJoint.rangeOfMotionTop = (int(float(val)) / 100) * exo.currentJoint.maxHeight
@@ -509,5 +510,5 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
-start_can(components, tkinter_loop, root.mainloop)
-                                                                                                                                                                                                
+#start_can(components, tkinter_loop, root.mainloop)
+root.mainloop()                                                                                                                                                                               
