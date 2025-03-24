@@ -492,7 +492,7 @@ def update_visibility():
             pass
         
         # Display image in bottom left
-        photo = display_image("/Users/zackslutzky/SELERE/3stepCurrent.png")
+        photo = display_image("Assets/3stepCurrent.png")
         if photo:
             image_label.config(image=photo)
             image_label.image = photo  # Keep a reference
@@ -554,5 +554,4 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
-#start_can(components, tkinter_loop, root.mainloop)
-root.mainloop()                                                                                                                                                                               
+start_can(components, tkinter_loop, root.mainloop)                                                                                                                                                                             
