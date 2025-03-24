@@ -2,6 +2,7 @@ import tkinter as tk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop, comm_can_transmit_eid, write_log
 from kneeMotor.motorControl import current, set_origin, speed
+from PIL import Image, ImageTk
 
 # Initialize main window
 root = tk.Tk()
@@ -16,6 +17,23 @@ selected_joint = tk.StringVar(value=exo.currentJoint.name)
 selected_tab = tk.StringVar(value="Edit")
 selected_doc_button = tk.StringVar(value="Max Intensity")  # Add this line
 
+
+
+
+# Add this function somewhere in your code (before the main loop)
+def display_image(image_path):
+    try:
+        img = Image.open(image_path)
+        img = img.resize((300, 200), Image.LANCZOS)  # Adjust size as needed
+        photo = ImageTk.PhotoImage(img)
+        return photo
+    except Exception as e:
+        print(f"Error loading image: {e}")
+        return None
+
+# Add this variable near your other frame variables
+image_frame = tk.Frame(root)
+image_label = tk.Label(image_frame)
 # Dictionary to store settings for each mode and joint
 settings = {
     "Full": {
@@ -423,19 +441,20 @@ def update_button_colors():
 update_button_colors()
 
 def update_visibility():
-    global button_tank_frame, start_button, blank_tank
+    global button_tank_frame, start_button, blank_tank, image_frame, image_label
+    
     # Preserve the relwidth of mode_frame (0.45)
-    mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)  # Updated relwidth to 0.45
+    mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)
     status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
-        doc_button_frame.place_forget()  # Hide DOC buttons
-        new_button_frame.place_forget()  # Hide new buttons
-        # Explicitly place the text boxes with correct coordinates
-        intensity_text_box.place(x=100, y=230, width=230, height=60)  # Show Intensity text box
-        height_text_box.place(x=350, y=230, width=200, height=60)  # Show Height text box
+        doc_button_frame.place_forget()
+        new_button_frame.place_forget()
+        intensity_text_box.place(x=100, y=230, width=230, height=60)
+        height_text_box.place(x=350, y=230, width=200, height=60)
+        image_frame.place_forget()
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
@@ -447,21 +466,43 @@ def update_visibility():
     elif selected_tab.get() == "DOC":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-        doc_button_frame.place(relx=0.025, rely=0.225, relwidth=0.35, relheight=0.35)  # Show DOC buttons
-        new_button_frame.place(relx=0.025, rely=0.625, relwidth=0.35, relheight=0.35)  # Adjusted rely and relwidth for new buttons
-        intensity_text_box.place_forget()  # Hide Intensity text box
-        height_text_box.place_forget()  # Hide Height text box
+        doc_button_frame.place(relx=0.025, rely=0.225, relwidth=0.35, relheight=0.35)
+        new_button_frame.place(relx=0.025, rely=0.625, relwidth=0.35, relheight=0.35)
+        intensity_text_box.place_forget()
+        height_text_box.place_forget()
+        image_frame.place_forget()
         try:
             button_tank_frame.place_forget()
         except NameError:
             pass
-    else:
+        
+    elif selected_tab.get() == "Analytics":
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
         slider_frame.place_forget()
-        doc_button_frame.place_forget()  # Hide DOC buttons
-        new_button_frame.place_forget()  # Hide new buttons
-        intensity_text_box.place_forget()  # Hide Intensity text box
-        height_text_box.place_forget()  # Hide Height text box
+        doc_button_frame.place_forget()
+        new_button_frame.place_forget()
+        intensity_text_box.place_forget()
+        height_text_box.place_forget()
+        try:
+            button_tank_frame.place_forget()
+        except NameError:
+            pass
+        
+        # Display image in bottom left
+        photo = display_image("/Users/zackslutzky/SELERE/3stepCurrent.png")
+        if photo:
+            image_label.config(image=photo)
+            image_label.image = photo  # Keep a reference
+            image_frame.place(relx=0.05, rely=0.7, relwidth=0.3, relheight=0.25)
+            image_label.pack(fill="both", expand=True)
+    else:  # User tab
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        slider_frame.place_forget()
+        doc_button_frame.place_forget()
+        new_button_frame.place_forget()
+        intensity_text_box.place_forget()
+        height_text_box.place_forget()
+        image_frame.place_forget()
         button_tank_frame = tk.Frame(root)
         button_tank_frame.place(x=50, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
