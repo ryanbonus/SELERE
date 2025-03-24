@@ -83,10 +83,11 @@ def run():
     if exo.currentState == "started":
         if exo.currentMode.name == "Full":
             position = exo.currentJoint.getPosition()
+            print(position)
             desSpd = exo.currentJoint.getDesSpeed()
-            if position > exo.currentJoint.rangeOfMotionTop:
+            if position > exo.currentJoint.maxHeight:
                 exo.currentJoint.direction = -1 * exo.currentJoint.direction
-            if position < exo.currentJoint.rangeOfMotionBottom:
+            if position < exo.currentJoint.minHeight:
                 exo.currentJoint.direction -1 * exo.currentJoint.direction
             if exo.currentJoint.direction == 1:
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
@@ -111,6 +112,8 @@ def run():
 
 def start_button_released(*args):
     print("Start button released")
+    write_log(f"LeftKnee Position:{exo.leftKnee.getPosition()}")
+    write_log(f"RightKnee Position:{exo.rightKnee.getPosition()}")
     exo.currentState = exo.states[0]
 
     
@@ -179,7 +182,7 @@ def update_height(val):
     settings[mode][joint]["max_height"] = int(float(val))
 
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    exo.currentJoint.rangeOfMotionTop = (int(float(val)) / 100) * exo.currentJoint.maxHeight
+    exo.currentJoint.maxHeight = (int(float(val)) / 100) * exo.currentJoint.rangeOfMotion
 
 # Intensity tank
 #intensity_label = tk.Label(text="Intensity", font=("Arial", 20))

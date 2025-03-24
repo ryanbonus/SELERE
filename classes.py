@@ -4,20 +4,20 @@ import kneeMotor.motorControl
 
 # Class for Knee Motor
 class KneeMotor:
-    def __init__(self, id, name, direction):
+    def __init__(self, id, name, direction, maxHeight, minHeight):
         self.position = 0
         self.speed = 0
         self.current = 0
         self.temp = 0
         self.errorCode=0
         self.torque = 0
-        self.rangeOfMotionTop = 0
-        self.rangeOfMotionBottom = 20
+        self.maxHeight = maxHeight
+        self.rangeOfMotion = abs(maxHeight-minHeight)
+        self.minHeight = minHeight
         self.canbus = 0
         self.direction = direction
         self.desSpd = 0
         self.maxSpd = 1250
-        self.maxHeight = 1000
         self.maxCurrent = 5
         self.desCurrent = 0
         self.id = id
@@ -143,9 +143,9 @@ class Exoskeleton:
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.canbus = 0
-        self.leftKnee = KneeMotor(0, "Left Knee", -1)
+        self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 100)
         self.leftAnkle = AnkleMotor(2, "Left Ankle")
-        self.rightKnee = KneeMotor(1, "Right Knee", 1)
+        self.rightKnee = KneeMotor(1, "Right Knee", 1, 64536, 65436)
         self.rightAnkle = AnkleMotor(3, "Right Ankle")
         self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
