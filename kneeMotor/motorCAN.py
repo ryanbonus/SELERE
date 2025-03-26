@@ -40,14 +40,14 @@ def can_handler_thread(bus, jointMotors):
             if msg.arbitration_id == RIGHT_KNEE_ID: #0x2900 is the ID of the right Knee motor
                 jointIndex = 1
             try:
-                position = (msg.data[0]<<8)+msg.data[1]
+                jointMotors[jointIndex].position = (msg.data[0]<<8)+msg.data[1]
                 jointMotors[jointIndex].speed = (msg.data[2]<<8)+msg.data[3]
                 jointMotors[jointIndex].current = (msg.data[4]<<8)+msg.data[5]
                 jointMotors[jointIndex].temp = msg.data[6]
                 jointMotors[jointIndex].errorCode = msg.data[7]
 
-                if position > 32768:
-                    jointMotors[jointIndex].position = position - 65536 
+                if jointMotors[jointIndex].position > 32768:
+                    jointMotors[jointIndex].position = jointMotors[jointIndex].position - 65536 
 
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")

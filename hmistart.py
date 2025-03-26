@@ -101,11 +101,11 @@ def run():
     if exo.currentState == "started":
         if exo.currentMode.name == "Full":
             position = exo.currentJoint.getPosition()
-            print(position,'/',exo.currentJoint.desHeight)
+            print(position,'/',exo.currentJoint.desHeight,',',exo.currentJoint.currentDirection)
             desSpd = exo.currentJoint.getDesSpeed()
-            if position > exo.currentJoint.desHeight:
+            if abs(position) > abs(exo.currentJoint.desHeight):
                 exo.currentJoint.currentDirection = -1 * exo.currentJoint.initialDirection
-            if position < exo.currentJoint.minHeight:
+            if abs(position) < abs(exo.currentJoint.minHeight):
                 exo.currentJoint.currentDirection = exo.currentJoint.initialDirection
             if exo.currentJoint.currentDirection == 1:
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
