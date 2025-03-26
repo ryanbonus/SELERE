@@ -555,4 +555,5 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
-start_can(components, tkinter_loop, root.mainloop)                                                                                                                                                                             
+#start_can(components, tkinter_loop, root.mainloop)              
+root.mainloop()                                                                                                                                                               
