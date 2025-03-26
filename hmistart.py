@@ -38,8 +38,8 @@ def display_image(image_path):
 # Dictionary to store settings for each mode and joint
 settings = {
     "Full": {
-        "Left Knee": {"max_intensity": exo.leftKnee.maxSpd, "min_intensity": exo.leftKnee, "max_height": exo.leftKnee.maxHeight, "min_height": exo.leftKnee, "current_intensity": 0, "current_height": 0},
-        "Left Ankle": {"max_intensity": exo.leftAnkle, "min_intensity": exo.leftAnkle, "max_height": exo.leftAnkle, "min_height": exo.leftAnkle, "current_intensity": 0, "current_height": 0},
+        "Left Knee": {"max_intensity": exo.leftKnee.maxSpd, "min_intensity": exo.leftKnee.minSpd, "max_height": exo.leftKnee.maxHeight, "min_height": exo.leftKnee.minHeight, "current_intensity": 0, "current_height": 0},
+        "Left Ankle": {"max_intensity": exo.leftAnkle.maxSpd, "min_intensity": exo.leftAnkle.minSpd, "max_height": exo.leftAnkle.maxHeight, "min_height": exo.leftAnkle.minHeight, "current_intensity": 0, "current_height": 0},
         "Right Knee": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
         "Right Ankle": {"max_intensity": 100, "min_intensity": 0, "max_height": 100, "min_height": 0, "current_intensity": 0, "current_height": 0},
     },
