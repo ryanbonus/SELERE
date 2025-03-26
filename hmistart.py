@@ -489,7 +489,7 @@ def update_visibility():
             pass
         
         # Display image in bottom left
-        photo = display_image("/Users/zackslutzky/SELERE/3stepCurrent.png")
+        photo = display_image("/home/seniordesign/SELERE/Assets/3stepCurrent.png")
         if photo:
             image_label.config(image=photo)
             image_label.image = photo  # Keep a reference
