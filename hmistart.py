@@ -106,8 +106,8 @@ def run():
             if position > exo.currentJoint.maxHeight:
                 exo.currentJoint.currentDirection = -1 * exo.currentJoint.initialDirection
             if position < exo.currentJoint.minHeight:
-                exo.currentJoint.direction -1 * exo.currentJoint.initialDirection
-            if exo.currentJoint.direction == 1:
+                exo.currentJoint.currentDirection = exo.currentJoint.initialDirection
+            if exo.curreExoskntJoint.initialDirection == 1:
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
                 #write_log(position)
             else:
