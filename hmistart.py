@@ -40,8 +40,8 @@ settings = {
     "Full": {
         "Left Knee": {"max_intensity": exo.leftKnee.maxSpd, "min_intensity": exo.leftKnee.minSpd, "max_height": exo.leftKnee.maxHeight, "min_height": exo.leftKnee.minHeight, "current_intensity": 0, "current_height": 0},
         "Left Ankle": {"max_intensity": exo.leftAnkle.maxSpd, "min_intensity": exo.leftAnkle.minSpd, "max_height": exo.leftAnkle.maxHeight, "min_height": exo.leftAnkle.minHeight, "current_intensity": 0, "current_height": 0},
-        "Right Knee": {"max_intensity": exo.rightKnee, "min_intensity": exo.rightKnee, "max_height": exo.rightKnee, "min_height": exo.rightKnee, "current_intensity": 0, "current_height": 0},
-        "Right Ankle": {"max_intensity": exo.rightAnkle, "min_intensity": exo.rightAnkle, "max_height": exo.rightAnkle, "min_height": exo.rightAnkle, "current_intensity": 0, "current_height": 0},
+        "Right Knee": {"max_intensity": exo.rightKnee.maxSpd, "min_intensity": exo.rightKnee.minSpd, "max_height": exo.rightKnee.maxHeight, "min_height": exo.rightKnee.minHeight, "current_intensity": 0, "current_height": 0},
+        "Right Ankle": {"max_intensity": exo.rightAnkle.maxSpd, "min_intensity": exo.rightAnkle.minSpd, "max_height": exo.rightAnkle.maxHeight, "min_height": exo.rightAnkle.minHeight, "current_intensity": 0, "current_height": 0},
     },
     "Partial": {
         "Left Knee": {"max_intensity": exo.leftKnee.maxSpd, "min_intensity": exo.leftKnee, "max_height": exo.leftKnee.maxHeight, "min_height": exo.leftKnee, "current_intensity": 0, "current_height": 0},
