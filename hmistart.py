@@ -118,9 +118,9 @@ def run():
             desCurrent = exo.currentJoint.getDesCurrent()
             if exo.currentState == "started":
                 if exo.currentMode.name == "Partial":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent, controller_id=exo.currentJoint.id))
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
                 if exo.currentMode.name == "Resistance":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent, controller_id=exo.currentJoint.id))
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
         root.after(1, run)
     else:
         comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
