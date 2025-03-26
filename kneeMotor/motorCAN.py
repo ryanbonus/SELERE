@@ -3,7 +3,7 @@ import can
 from datetime import datetime
 import time
 import threading
-from kneeMotor.motorControl import set_origin
+from kneeMotor.motorControl import set_origin, current
 
 #Motor parameters
 BITRATE = 500000
@@ -40,11 +40,15 @@ def can_handler_thread(bus, jointMotors):
             if msg.arbitration_id == RIGHT_KNEE_ID: #0x2900 is the ID of the right Knee motor
                 jointIndex = 1
             try:
-                jointMotors[jointIndex].position = (msg.data[0]<<8)+msg.data[1]
+                position = (msg.data[0]<<8)+msg.data[1]
                 jointMotors[jointIndex].speed = (msg.data[2]<<8)+msg.data[3]
                 jointMotors[jointIndex].current = (msg.data[4]<<8)+msg.data[5]
                 jointMotors[jointIndex].temp = msg.data[6]
                 jointMotors[jointIndex].errorCode = msg.data[7]
+
+                if position > 32768:
+                    jointMotors[jointIndex].position = position - 65536 
+
             except Exception as e:
                 print(f"Error extracting parameter, message: {e}")
 
@@ -78,6 +82,7 @@ def tkinter_loop(jointMotors, canBus, tkLoop):
     for component in jointMotors:
         component.canbus = canBus
         comm_can_transmit_eid(*set_origin(canBus, 0, controller_id=component.id))
+        
     tkLoop()
 
 def start_can(jointMotors, eventLoop, event):
