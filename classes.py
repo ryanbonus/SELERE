@@ -15,7 +15,8 @@ class KneeMotor:
         self.rangeOfMotion = abs(maxHeight-minHeight)
         self.minHeight = minHeight
         self.canbus = 0
-        self.direction = direction
+        self.initialDirection = direction
+        self.currentDirection = direction
         self.desSpd = 0
         self.maxSpd = 1250
         self.maxCurrent = 5
@@ -143,9 +144,9 @@ class Exoskeleton:
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
         self.canbus = 0
-        self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 100)
+        self.leftKnee = KneeMotor(0, "Left Knee", 1, 1000, 100)
         self.leftAnkle = AnkleMotor(2, "Left Ankle")
-        self.rightKnee = KneeMotor(1, "Right Knee", 1, 64536, 65436)
+        self.rightKnee = KneeMotor(1, "Right Knee", -1, 64536, 65436)
         self.rightAnkle = AnkleMotor(3, "Right Ankle")
         self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
