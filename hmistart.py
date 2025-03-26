@@ -101,12 +101,13 @@ def run():
     if exo.currentState == "started":
         if exo.currentMode.name == "Full":
             position = exo.currentJoint.getPosition()
+            print(position,'/',exo.currentJoint.desHeight)
             desSpd = exo.currentJoint.getDesSpeed()
-            if position > exo.currentJoint.rangeOfMotionTop:
-                exo.currentJoint.direction = -1 * exo.currentJoint.direction
-            if position < exo.currentJoint.rangeOfMotionBottom:
-                exo.currentJoint.direction -1 * exo.currentJoint.direction
-            if exo.currentJoint.direction == 1:
+            if position > exo.currentJoint.desHeight:
+                exo.currentJoint.currentDirection = -1 * exo.currentJoint.initialDirection
+            if position < exo.currentJoint.minHeight:
+                exo.currentJoint.currentDirection = exo.currentJoint.initialDirection
+            if exo.currentJoint.currentDirection == 1:
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
                 #write_log(position)
             else:
@@ -129,6 +130,8 @@ def run():
 
 def start_button_released(*args):
     print("Start button released")
+    write_log(f"LeftKnee Position:{exo.leftKnee.getPosition()}")
+    write_log(f"RightKnee Position:{exo.rightKnee.getPosition()}")
     exo.currentState = exo.states[0]
 
     
@@ -198,7 +201,7 @@ def update_height(val):
     settings[mode][joint]["current_height"] = int(float(val))
 
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    exo.currentJoint.rangeOfMotionTop = (int(float(val)) / 100) * exo.currentJoint.maxHeight
+    exo.currentJoint.desHeight = ((int(float(val)) / 100) * exo.currentJoint.rangeOfMotion) + exo.currentJoint.minHeight
 
 # Intensity tank
 #intensity_label = tk.Label(text="Intensity", font=("Arial", 20))
@@ -489,11 +492,12 @@ def update_visibility():
             pass
         
         # Display image in bottom left
-        photo = display_image("/home/seniordesign/SELERE/Assets/3stepCurrent.png")
+        photo = display_image("Assets/3stepCurrent.PNG")
         if photo:
             image_label.config(image=photo)
             image_label.image = photo  # Keep a reference
-            image_frame.place(relx=0.05, rely=0.7, relwidth=0.3, relheight=0.25)
+
+            image_frame.place(relx=0.05, rely=0.7, relwidth=0.2, relheight=0.25)
             image_label.pack(fill="both", expand=True)
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
@@ -508,7 +512,7 @@ def update_visibility():
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
         start_button.bind("<ButtonPress>", start_button_pressed)
-        start_button.bind("<ButtonRelease>", start_button_released)        
+        start_button.bind("<ButtonRelease>", start_button_released)  
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
 
@@ -551,5 +555,4 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
-#start_can(components, tkinter_loop, root.mainloop)
-root.mainloop()                                                                                                                                                                               
+start_can(components, tkinter_loop, root.mainloop)                                                                                                                                                                             
