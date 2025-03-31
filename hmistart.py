@@ -136,8 +136,9 @@ slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.01, rely=0.05, relwidth=0.05, relheight=0.1)
 
-status_frame = tk.Frame(root)
-status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+
+#status_frame = tk.Frame(root)
+#status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 tab_frame = tk.Frame(root)
 tab_frame.place(relx=0.425, rely=0.05, relwidth=0.5, relheight=0.2)
@@ -386,7 +387,7 @@ def update_visibility():
         pass
     
     mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)
-    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+    #status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
@@ -431,7 +432,7 @@ def update_visibility():
         image_frame.place_forget()
         
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=700, height=560)
+        button_tank_frame.place(x=25, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
         start_button.bind("<ButtonPress>", start_button_pressed)
