@@ -158,9 +158,9 @@ class Exoskeleton:
         self.currentMode = self.modes[0]
         self.canbus = 0
         self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 1)
-        self.leftAnkle = AnkleMotor(2, "Left Ankle")
+        self.leftAnkle = AnkleMotor(2, "Left Ankle", -1, 1000, 1)
         self.rightKnee = KneeMotor(1, "Right Knee", 1, -1000, -1)
-        self.rightAnkle = AnkleMotor(3, "Right Ankle")
+        self.rightAnkle = AnkleMotor(3, "Right Ankle", 1, -1000, -1)
         self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")

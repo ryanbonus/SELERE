@@ -165,9 +165,9 @@ def update_intensity(val):
     settings[mode][joint]["current_intensity"] = int(float(val))
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
     if mode == "Full":
-        exo.currentJoint.desSpd = (int(float(val)) / 100) * settings[mode][joint]["max_intensity"]
+        exo.currentJoint.desSpd = (((int(float(val)) / 100) * (settings[mode][joint]["max_intensity"]-settings[mode][joint]["min_intensity"])) + settings[mode][joint]["min_intensity"])
     else:
-        exo.currentJoint.desCurrent = (int(float(val)) / 100) * settings[mode][joint]["max_intensity"]
+        exo.currentJoint.desCurrent = (((int(float(val)) / 100) * (settings[mode][joint]["max_intensity"]-settings[mode][joint]["min_intensity"])) + settings[mode][joint]["min_intensity"])
 
 
 def update_height(val):
@@ -175,7 +175,7 @@ def update_height(val):
     joint = selected_joint.get()
     settings[mode][joint]["current_height"] = int(float(val))
     height_tank.coords(height_fill, slider_widths[0], slider_heights[1], slider_widths[1], slider_heights[1] - (slider_heights[1] * (float(val) / 100)))
-    exo.currentJoint.desHeight = ((int(float(val)) / 100) * exo.currentJoint.rangeOfMotion) + exo.currentJoint.minHeight
+    exo.currentJoint.desHeight = (((int(float(val)) / 100) * (settings[mode][joint]["max_height"]-settings[mode][joint]["min_height"])) + settings[mode][joint]["min_height"])
 
 # Intensity tank
 intensity_tank = tk.Canvas(slider_frame, width=slider_widths[1], height=slider_heights[1], bg="lightgray")
@@ -459,6 +459,8 @@ def update_value(delta):
     elif selected == "Min Height":
         settings[mode][joint]["min_height"] += delta
     update_button_labels()
+    update_intensity()
+    update_height()
 
 buttons = [
     ("+1", lambda: update_value(1)),
