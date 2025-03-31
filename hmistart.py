@@ -164,8 +164,11 @@ def update_intensity(val):
     joint = selected_joint.get()
     settings[mode][joint]["current_intensity"] = int(float(val))
     intensity_tank.coords(intensity_fill, slider_widths[0], slider_heights[1] - (slider_heights[1] * (float(val) / 100)), slider_widths[1], slider_heights[1])
-    exo.currentJoint.desSpd = (int(float(val)) / 100) * exo.currentJoint.maxSpd
-    exo.currentJoint.desCurrent = (int(float(val)) / 100) * exo.currentJoint.maxCurrent
+    if mode == "Full":
+        exo.currentJoint.desSpd = (int(float(val)) / 100) * settings[mode][joint]["max_intensity"]
+    else:
+        exo.currentJoint.desCurrent = (int(float(val)) / 100) * settings[mode][joint]["max_intensity"]
+
 
 def update_height(val):
     mode = selected_mode.get()

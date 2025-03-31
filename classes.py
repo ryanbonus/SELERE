@@ -78,20 +78,27 @@ class KneeMotor:
 
 # Class for Ankle Motor
 class AnkleMotor:
-    def __init__(self, id, name):
+    def __init__(self, id, name, direction, maxHeight, minHeight):
         self.position = 0
         self.speed = 0
         self.current = 0
         self.temp = 0
         self.errorCode=0
         self.torque = 0
-        self.rangeOfMotionTop = 0
-        self.rangeOfMotionBottom = 20
+        self.maxHeight = maxHeight
+        self.minHeight = minHeight
+        self.rangeOfMotion = abs(maxHeight - minHeight)
         self.canbus = 0
-        self.direction = 1
+        self.initialDirection = direction
+        self.currentDirection = direction
         self.desSpd = 0
+        self.desHeight = 0
         self.maxSpd = 1250
-        self.maxHeight = 1000
+        self.minSpd = 0
+        self.maxAssist = 500
+        self.minAssist = 0
+        self.maxResist = 500
+        self.minResist = 0
         self.maxCurrent = 5
         self.desCurrent = 0
         self.id = id
