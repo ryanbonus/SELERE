@@ -27,7 +27,7 @@ def display_image(image_path):
     global current_photo
     try:
         img = Image.open(image_path)
-        img = img.resize((600, 400), Image.LANCZOS)
+        img = img.resize((1080, 720), Image.LANCZOS)
         current_photo = ImageTk.PhotoImage(img)
         image_label.config(image=current_photo)
         return current_photo
@@ -416,9 +416,10 @@ def update_visibility():
         new_button_frame.place_forget()
         intensity_text_box.place_forget()
         height_text_box.place_forget()
+        joint_frame.place_forget()
         
         display_image("Assets/3stepCurrent.PNG")
-        image_frame.place(relx=0.05, rely=0.3, relwidth=0.3, relheight=0.4)
+        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.65)
 
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
