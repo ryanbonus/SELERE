@@ -21,11 +21,11 @@ class KneeMotor:
         self.desHeight = 0
         self.maxSpd = 1250
         self.minSpd = 0
-        self.maxAssist = 5
+        self.maxAssist = self.maxCurrent
         self.minAssist = 0
-        self.maxResist = 5
+        self.maxResist = self.maxCurrent
         self.minResist = 0
-        self.maxCurrent = 5
+        self.maxCurrent = 5000
         self.desCurrent = 0
         self.id = id
         self.name = name
