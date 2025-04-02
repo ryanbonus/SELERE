@@ -27,7 +27,7 @@ def display_image(image_path):
     global current_photo
     try:
         img = Image.open(image_path)
-        img = img.resize((1080, 720), Image.LANCZOS)
+        img = img.resize((972, 720), Image.LANCZOS)
         current_photo = ImageTk.PhotoImage(img)
         image_label.config(image=current_photo)
         return current_photo
@@ -417,7 +417,7 @@ def update_visibility():
         image_frame.place_forget()
         
     elif selected_tab.get() == "Analytics":
-        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.65)
         slider_frame.place_forget()
         doc_button_frame.place_forget()
         new_button_frame.place_forget()
@@ -426,7 +426,7 @@ def update_visibility():
         joint_frame.place_forget()
         
         display_image("Assets/3stepCurrent.PNG")
-        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.7)
+        image_frame.place(relx=0.25, rely=0.26, relwidth=0.5125, relheight=0.725)
 
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
