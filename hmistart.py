@@ -27,7 +27,7 @@ def display_image(image_path):
     global current_photo
     try:
         img = Image.open(image_path)
-        img = img.resize((600, 400), Image.LANCZOS)
+        img = img.resize((1080, 720), Image.LANCZOS)
         current_photo = ImageTk.PhotoImage(img)
         image_label.config(image=current_photo)
         return current_photo
@@ -138,8 +138,9 @@ slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.01, rely=0.05, relwidth=0.05, relheight=0.1)
 
-status_frame = tk.Frame(root)
-status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+
+#status_frame = tk.Frame(root)
+#status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 tab_frame = tk.Frame(root)
 tab_frame.place(relx=0.425, rely=0.05, relwidth=0.5, relheight=0.2)
@@ -391,7 +392,7 @@ def update_visibility():
         pass
     
     mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)
-    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+    #status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
@@ -421,9 +422,10 @@ def update_visibility():
         new_button_frame.place_forget()
         intensity_text_box.place_forget()
         height_text_box.place_forget()
+        joint_frame.place_forget()
         
         display_image("Assets/3stepCurrent.PNG")
-        image_frame.place(relx=0.05, rely=0.3, relwidth=0.3, relheight=0.4)
+        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.65)
 
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
@@ -435,7 +437,7 @@ def update_visibility():
         image_frame.place_forget()
         
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=700, height=560)
+        button_tank_frame.place(x=25, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
         start_button.bind("<ButtonPress>", start_button_pressed)
