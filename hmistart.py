@@ -113,12 +113,13 @@ def run():
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
 
         if exo.currentMode.name == "Partial" or "Resistance":
-            desCurrent = exo.currentJoint.getDesCurrent()
+            desCurrentMilliamps = exo.currentJoint.getDesCurrent()
+            desCurrentAmps = desCurrentMilliamps / 1000
             if exo.currentState == "started":
                 if exo.currentMode.name == "Partial":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrent*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
                 if exo.currentMode.name == "Resistance":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrent*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
         root.after(1, run)
     else:
         comm_can_transmit_eid(*current(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
@@ -425,7 +426,7 @@ def update_visibility():
         joint_frame.place_forget()
         
         display_image("Assets/3stepCurrent.PNG")
-        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.65)
+        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.7)
 
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
