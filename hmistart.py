@@ -27,7 +27,7 @@ def display_image(image_path):
     global current_photo
     try:
         img = Image.open(image_path)
-        img = img.resize((600, 400), Image.LANCZOS)
+        img = img.resize((1080, 720), Image.LANCZOS)
         current_photo = ImageTk.PhotoImage(img)
         image_label.config(image=current_photo)
         return current_photo
@@ -138,8 +138,9 @@ slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
 mode_frame = tk.Frame(root)
 mode_frame.place(relx=0.01, rely=0.05, relwidth=0.05, relheight=0.1)
 
-status_frame = tk.Frame(root)
-status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+
+#status_frame = tk.Frame(root)
+#status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
 tab_frame = tk.Frame(root)
 tab_frame.place(relx=0.425, rely=0.05, relwidth=0.5, relheight=0.2)
@@ -382,8 +383,10 @@ def update_button_colors():
 
 update_button_colors()
 
+# [Previous imports and code remain the same until the update_visibility function]
+
 def update_visibility():
-    global button_tank_frame, start_button, blank_tank
+    global button_tank_frame, start_button, blank_tank, lock_screen_frame
     
     try:
         button_tank_frame.place_forget()
@@ -391,7 +394,7 @@ def update_visibility():
         pass
     
     mode_frame.place(relx=0.01, rely=0.05, relwidth=0.40, relheight=0.15)
-    status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
+    #status_frame.place(relx=0.05, rely=0.2, relwidth=0.25, relheight=0.08)
 
     if selected_tab.get() == "Edit":
         slider_frame.place(relx=0.05, rely=0.3, relwidth=0.25, relheight=0.7)
@@ -401,15 +404,25 @@ def update_visibility():
         intensity_text_box.place(x=100, y=230, width=230, height=60)
         height_text_box.place(x=350, y=230, width=200, height=60)
         image_frame.place_forget()
+        # Remove lock screen if it exists
+        try:
+            lock_screen_frame.place_forget()
+        except NameError:
+            pass
         root.update_idletasks()
         root.tk.call("raise", intensity_tank._w)
         root.tk.call("raise", height_tank._w)
 
     elif selected_tab.get() == "DOC":
-        joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+        # Create lock screen frame if it doesn't exist
+        if 'lock_screen_frame' not in globals():
+            create_lock_screen()
+        lock_screen_frame.place(relx=0.2, rely=0.3, relwidth=0.6, relheight=0.4)
+        # Hide the normal DOC content initially
+        joint_frame.place_forget()
         slider_frame.place_forget()
-        doc_button_frame.place(relx=0.025, rely=0.225, relwidth=0.35, relheight=0.35)
-        new_button_frame.place(relx=0.025, rely=0.625, relwidth=0.35, relheight=0.35)
+        doc_button_frame.place_forget()
+        new_button_frame.place_forget()
         intensity_text_box.place_forget()
         height_text_box.place_forget()
         image_frame.place_forget()
@@ -421,9 +434,15 @@ def update_visibility():
         new_button_frame.place_forget()
         intensity_text_box.place_forget()
         height_text_box.place_forget()
+        joint_frame.place_forget()
+        # Remove lock screen if it exists
+        try:
+            lock_screen_frame.place_forget()
+        except NameError:
+            pass
         
         display_image("Assets/3stepCurrent.PNG")
-        image_frame.place(relx=0.05, rely=0.3, relwidth=0.3, relheight=0.4)
+        image_frame.place(relx=0.2, rely=0.3, relwidth=0.6125, relheight=0.65)
 
     else:  # User tab
         joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
@@ -433,15 +452,81 @@ def update_visibility():
         intensity_text_box.place_forget()
         height_text_box.place_forget()
         image_frame.place_forget()
+        # Remove lock screen if it exists
+        try:
+            lock_screen_frame.place_forget()
+        except NameError:
+            pass
         
         button_tank_frame = tk.Frame(root)
-        button_tank_frame.place(x=50, y=350, width=700, height=560)
+        button_tank_frame.place(x=25, y=350, width=700, height=560)
         start_button = tk.Button(button_tank_frame, text="Start", height=6, width=10, font=("Arial", 50))
         start_button.place(x=0, y=0, width=500, height=560)
         start_button.bind("<ButtonPress>", start_button_pressed)
         start_button.bind("<ButtonRelease>", start_button_released)  
         blank_tank = tk.Canvas(button_tank_frame, bg="lightgray")
         blank_tank.place(x=550, y=0, width=100, height=560)
+
+def create_lock_screen():
+    global lock_screen_frame, lock_label, back_button, unlock_button
+    
+    # Create the lock screen frame
+    lock_screen_frame = tk.Frame(root, bg="lightgray", bd=5, relief=tk.RAISED)
+    
+    # Add "Locked" label
+    lock_label = tk.Label(
+        lock_screen_frame, 
+        text="LOCKED", 
+        font=("Arial", 48, "bold"), 
+        bg="lightgray", 
+        fg="red"
+    )
+    lock_label.pack(pady=20)
+    
+    # Create button frame
+    button_frame = tk.Frame(lock_screen_frame, bg="lightgray")
+    button_frame.pack(pady=20)
+    
+    # Add "Go Back" button
+    back_button = tk.Button(
+        button_frame, 
+        text="Go Back", 
+        font=("Arial", 24),
+        width=10,
+        command=go_back_from_lock,
+        bg="lightblue"
+    )
+    back_button.pack(side=tk.LEFT, padx=20)
+    
+    # Add "Unlock" button
+    unlock_button = tk.Button(
+        button_frame, 
+        text="Unlock", 
+        font=("Arial", 24),
+        width=10,
+        command=unlock_doc_screen,
+        bg="lightgreen"
+    )
+    unlock_button.pack(side=tk.LEFT, padx=20)
+
+def go_back_from_lock():
+    # Hide lock screen and go back to previous tab
+    lock_screen_frame.place_forget()
+    # Find the current tab index and go to the previous one
+    current_tab_index = tabs.index(selected_tab.get())
+    previous_tab = tabs[max(0, current_tab_index - 1)]
+    switch_tab(previous_tab)
+
+def unlock_doc_screen():
+    # Hide the lock screen
+    lock_screen_frame.place_forget()
+    
+    # Show the actual DOC content
+    joint_frame.place(relx=0.4, rely=0.3, relwidth=0.55, relheight=0.55)
+    doc_button_frame.place(relx=0.025, rely=0.225, relwidth=0.35, relheight=0.35)
+    new_button_frame.place(relx=0.025, rely=0.625, relwidth=0.35, relheight=0.35)
+
+# [Rest of the code remains the same]
 
 # Create a frame for the new buttons
 new_button_frame = tk.Frame(root)
