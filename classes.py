@@ -15,6 +15,7 @@ class KneeMotor:
         self.minHeight = minHeight
         self.rangeOfMotion = abs(maxHeight - minHeight)
         self.canbus = 0
+        self.maxCurrent = 5000
         self.initialDirection = direction
         self.currentDirection = direction
         self.desSpd = 0
@@ -25,7 +26,6 @@ class KneeMotor:
         self.minAssist = 0
         self.maxResist = self.maxCurrent
         self.minResist = 0
-        self.maxCurrent = 5000
         self.desCurrent = 0
         self.id = id
         self.name = name
