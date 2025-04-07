@@ -300,7 +300,7 @@ for tab in tabs:
 
 # Joint control buttons
 joint_buttons = []
-joints = [exo.leftKnee, exo.leftAnkle, exo.rightKnee, exo.rightAnkle]
+joints = [exo.leftKnee, exo.rightKnee]
 row, col = 0, 0
 for joint in joints:
     joint_button = tk.Button(joint_frame, text=joint.name, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 50), activebackground="green")
@@ -566,4 +566,5 @@ update_visibility()
 
 # Start the main loop
 components = [exo.leftKnee, exo.rightKnee]
-start_can(components, tkinter_loop, root.mainloop)                                                                                                                                                                             
+#start_can(components, tkinter_loop, root.mainloop)         
+root.mainloop()                                                                                                                                                                    
