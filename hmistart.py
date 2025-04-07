@@ -1,7 +1,7 @@
 import tkinter as tk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop, comm_can_transmit_eid, write_log
-from kneeMotor.motorControl import current, set_origin, speed
+from kneeMotor.motorControl import current, set_origin, speed, position_speed_acceleration
 from PIL import Image, ImageTk
 
 # Initialize main window
@@ -130,6 +130,7 @@ def start_button_released(*args):
     write_log(f"RightKnee Position:{exo.rightKnee.getPosition()}")
     write_log(f"LeftKnee Position:{exo.leftKnee.getPosition()}")
     write_log(f"RightKnee Position:{exo.rightKnee.getPosition()}")
+    comm_can_transmit_eid(*position_speed_acceleration(exo.currentJoint.canbus, 0, 600, 100, controller_id=exo.currentJoint.id))
     exo.currentState = exo.states[0]
 
 # Create frames for different sections
