@@ -1,69 +1,41 @@
-import numpy as np
+import pyCandle
+import sys
+import time
 
-#Motor parameters
-BITRATE = 500000
-CONTROLLER_ID = 0
+# Create CANdle object and ping FDCAN bus in search of drives.
+# Any found drives will be printed out by the ping() method.
 
-# CAN packet definitions
-CAN_PACKET_SET_DUTY = 0
-CAN_PACKET_SET_CURRENT = 1
-CAN_PACKET_SET_CURRENT_BRAKE = 2
-CAN_PACKET_SET_RPM = 3
-CAN_PACKET_SET_POS = 4
-CAN_PACKET_SET_ORIGIN_HERE = 5
-CAN_PACKET_SET_POS_SPD = 6
+candle = pyCandle.Candle(pyCandle.CAN_BAUD_1M, True)
+ids = candle.ping()
+candle.addMd80(ids[0])
 
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.positionWindow, 0.05)
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.velocityWindow, 1.0)
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.profileAcceleration, 10.0)
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.profileDeceleration, 5.0)
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.profileVelocity, 15.0)
+candle.writeMd80Register(ids[0], pyCandle.Md80Reg_E.quickStopDeceleration, 200.0)
 
-def buffer_append(nBytes, bufferObject, number, startingPos):
-    firstshift = (nBytes-1)*8
-    number = np.int32(number)
-    for i in range(0,nBytes):
-        temp = (number >> firstshift-i*8) & 0xFF
-        bufferObject.append(temp)
+candle.controlMd80SetEncoderZero(ids[0])                    #  Reset encoder at current position
+candle.controlMd80Mode(ids[0], pyCandle.POSITION_PROFILE)   # Set mode to position profile
+candle.controlMd80Enable(ids[0], True)                      # Enable the drive
 
-def buffer_append_int32(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
-    buffer_append(4,buffer,number,index)
+candle.begin()
 
-def buffer_append_int16(buffer, number, index): #To-do, Delete this function and replace with calls to buffer_append
-    buffer_append(2,buffer,number,index)
+#candle.md80s[0].setProfileAcceleration(1)
+#candle.md80s[0].setProfileVelocity(0.5)
 
-def position_speed_acceleration(bus, position, speed, rpa, controller_id=CONTROLLER_ID):
-    position_index = 0
-    speed_index = 4
-    rpa_index = 6
-    buffer = bytearray(0)
-    buffer_append_int32(buffer, np.int32(position*10000), position_index)
-    buffer_append_int16(buffer, speed/10, speed_index)
-    buffer_append_int16(buffer, rpa/10, rpa_index)
-    eid = (controller_id | int(CAN_PACKET_SET_POS_SPD) << 8)
-    return(bus, eid, buffer)
+candle.md80s[0].setTargetPosition(1)
 
-def current(bus, current, controller_id=CONTROLLER_ID):
-    current_index = 0
-    buffer = bytearray(0)
-    buffer_append_int32(buffer, np.int32(current*1000), current_index)
-    eid = (controller_id | int(CAN_PACKET_SET_CURRENT) << 8)
-    return(bus, eid, buffer)
+while not candle.md80s[0].isTargetPositionReached():
+    time.sleep(1)
 
+print("Target 1 Reached!")
+candle.md80s[0].setTargetPosition(0)
 
-#start here
-def speed(bus, rpm, controller_id=CONTROLLER_ID):
-    speed_index = 0
-    buffer = bytearray(0)
-    buffer_append_int32(buffer, np.int32(rpm), speed_index)
-    eid = (controller_id | int(CAN_PACKET_SET_RPM) << 8)
-    return(bus, eid, buffer)       
+while not candle.md80s[0].isTargetPositionReached():
+    time.sleep(1)
 
-def current_brake(bus, current, controller_id=CONTROLLER_ID):
-    current_index = 0
-    buffer = bytearray(0)
-    buffer_append_int32(buffer, np.int32(current*1000), current_index)
-    eid = (controller_id | int(CAN_PACKET_SET_CURRENT_BRAKE) << 8)
-    return(bus, eid, buffer)
-
-def set_origin(bus, set_origin_mode: int, controller_id=CONTROLLER_ID):
-    mode_index = 0
-    buffer = bytearray(0)
-    buffer_append(1, buffer, set_origin_mode, mode_index)
-    eid = (controller_id | int(CAN_PACKET_SET_ORIGIN_HERE) << 8)
-    return(bus, eid, buffer)  
+print("Target 2 Reached!")
+candle.end()
+sys.exit("EXIT SUCCESS")
