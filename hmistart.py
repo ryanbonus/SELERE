@@ -300,7 +300,7 @@ for tab in tabs:
 
 # Joint control buttons
 joint_buttons = []
-joints = [exo.leftKnee, exo.leftAnkle, exo.rightKnee, exo.rightAnkle]
+joints = [exo.leftKnee, exo.rightKnee, exo.leftAnkle, exo.rightAnkle]
 row, col = 0, 0
 for joint in joints:
     joint_button = tk.Button(joint_frame, text=joint.name, command=lambda j=joint: control_joint(j), height=6, width=20, font=("Arial", 50), activebackground="green")
