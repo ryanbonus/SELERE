@@ -38,3 +38,7 @@ def torque(candle, motor, id, torque):
 
 def stopCandle(candle):
     candle.end()
+
+def __main__():
+    candleObjects = setupCandle()
+    position(candleObjects[0], candleObjects[1], 0, math.pi/4)
