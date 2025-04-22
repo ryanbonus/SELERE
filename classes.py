@@ -78,7 +78,7 @@ class KneeMotor:
 
 # Class for Ankle Motor
 class AnkleMotor:
-    def __init__(self, id, name, direction, maxHeight, minHeight):
+    def __init__(self, index, name, direction, maxHeight, minHeight):
         self.position = 0
         self.speed = 0
         self.current = 0
@@ -88,21 +88,34 @@ class AnkleMotor:
         self.maxHeight = maxHeight
         self.minHeight = minHeight
         self.rangeOfMotion = abs(maxHeight - minHeight)
-        self.canbus = 0
         self.initialDirection = direction
         self.currentDirection = direction
         self.desSpd = 0
         self.desHeight = 0
-        self.maxSpd = 1250
+        self.maxSpd = 1
         self.minSpd = 0
-        self.maxAssist = 500
+        self.maxAssist = 0.5
         self.minAssist = 0
-        self.maxResist = 500
+        self.maxResist = 0.5
         self.minResist = 0
-        self.maxCurrent = 5
+        self.maxCurrent = 0.5
         self.desCurrent = 0
-        self.id = id
+        self.id = 0
+        self.candle = 0
+        self.index = index
         self.name = name
+
+    def getPosition(self):
+        return self.candle.md80s[self.index].getPosition()
+
+    def getSpeed(self):
+        return self.speed
+
+    def getDesSpeed(self):
+        return self.desSpd
+
+    def getDesCurrent(self):
+        return self.desCurrent
 
     def extend(self, rangeOfMotionTop, rangeOfMotionBottom, speed, acceleration):
         self.rangeOfMotionTop = rangeOfMotionTop
@@ -136,19 +149,6 @@ class AnkleMotor:
 
 # Exoskeleton Class containing modes and motors
 class Exoskeleton:
-    def __init__(self, canbus):
-        self.modeFA = Mode("Full", 1)
-        self.modePA = Mode("Partial", 2)
-        self.modePR = Mode("Resistance", 3)
-        self.modes = (self.modeFA, self.modePA, self.modePR)
-        self.currentMode = self.modes[0]
-        self.canbus = canbus
-        self.leftKnee = KneeMotor(self.Bus)
-        self.leftAnkle = AnkleMotor(self.Bus)
-        self.joints = (self.leftKnee, self.leftAnkle)
-        self.currentJoint = self.joints[0]
-        self.states = ("stoppped", "started")
-        self.currentState = self.states[0]
 
     def __init__(self):
         self.modeFA = Mode("Full", 1)
@@ -156,19 +156,14 @@ class Exoskeleton:
         self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.canbus = 0
         self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 1)
-        self.leftAnkle = AnkleMotor(2, "Left Ankle", -1, 1000, 1)
+        self.leftAnkle = AnkleMotor(0, "Left Ankle", -1, 3/4, 1)
         self.rightKnee = KneeMotor(1, "Right Knee", 1, -1000, -1)
-        self.rightAnkle = AnkleMotor(3, "Right Ankle", 1, -1000, -1)
+        self.rightAnkle = AnkleMotor(1, "Right Ankle", 1, 3/4, -1)
         self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
         self.currentState = self.states[0]
-
-        
-
-
 
 class Mode:
     def __init__(self, name, number):

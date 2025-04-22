@@ -24,32 +24,34 @@ def setupCandle():
         candle.controlMd80SetEncoderZero(motor)                    #  Reset encoder at current position
     return (candle, motors) 
 
-def position(motor, id, position):
-    candle.controlMd80Enable(motor, False)
-    candle.controlMd80Mode(motor, pyCandle.POSITION_PROFILE)   # Set mode to position profile
-    candle.controlMd80Enable(motor, True)                      # Enable the drive
+def position(id, index, position):
+    candle.controlMd80Enable(id, False)
+    candle.controlMd80Mode(id, pyCandle.POSITION_PROFILE)   # Set mode to position profile
+    candle.controlMd80Enable(id, True)                      # Enable the drive
     candle.begin()        
-    candle.md80s[id].setTargetPosition(position)
+    candle.md80s[index].setTargetPosition(position)
 
     while not candle.md80s[0].isTargetPositionReached():
         time.sleep(1)
 
-def velocity(motor, id, velocity):
-    candle.controlMd80Enable(motor, False)
-    candle.controlMd80Mode(motor, pyCandle.VELOCITY_PROFILE)
-    candle.controlMd80Enable(motor, True) 
+def velocity(id, index, velocity):
+    candle.controlMd80Enable(id, False)
+    candle.controlMd80Mode(id, pyCandle.VELOCITY_PROFILE)
+    candle.controlMd80Enable(id, True) 
     candle.begin() 
-    candle.md80s[id].setTargetVelocity(velocity)
+    candle.md80s[index].setTargetVelocity(velocity)
 
-def torque(motor, id, torque):
-    candle.controlMd80Enable(motor, False)
-    candle.controlMd80Mode(motor, pyCandle.RAW_TORQUE)
-    candle.controlMd80Enable(motor, True) 
+def torque(id, index, torque):
+    candle.controlMd80Enable(id, False)
+    candle.controlMd80Mode(id, pyCandle.RAW_TORQUE)
+    candle.controlMd80Enable(id, True) 
     candle.begin()     
-    candle.md80s[id].setTargetTorque(torque)
+    candle.md80s[index].setTargetTorque(torque)
 
 def stopCandle(candle):
     candle.end()
+
+
 
 def main():
     candleObjects = setupCandle()

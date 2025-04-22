@@ -1,7 +1,8 @@
 import tkinter as tk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop, comm_can_transmit_eid, write_log
-from kneeMotor.motorControl import current, set_origin, speed, current_brake
+from kneeMotor.motorControl import current, speed, current_brake
+from ankleMotor.motorControl import velocity, torque, stopCandle
 from PIL import Image, ImageTk
 
 # Initialize main window
@@ -59,7 +60,7 @@ settings = {
 
 # Function to set the mode
 def set_mode(mode):
-    if exo.currentMode.number != mode.number:  # Only change if it's different
+    if exo.currentMode.number != mode.number:  # Only change if it's 
         selected_mode.set(mode.name)
         update_button_colors()
         if mode in exo.modes:
@@ -107,22 +108,34 @@ def run():
                 exo.currentJoint.currentDirection = -1 * exo.currentJoint.initialDirection
             if abs(position) < abs(exo.currentJoint.minHeight):
                 exo.currentJoint.currentDirection = exo.currentJoint.initialDirection
-            if exo.currentJoint.currentDirection == 1:
-                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd, controller_id=exo.currentJoint.id))
-            else:
-                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, -desSpd, controller_id=exo.currentJoint.id))
+            if "Knee" in exo.currentJoint.name:
+                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd*exo.currentJoint.currentDirection, controller_id=exo.currentJoint.id))
+            if "Ankle" in exo.currentJoint.name:
+                velocity(exo.currentJoint.id, exo.currentJoint.index, desSpd*exo.currentJoint.currentDirection)
 
         if exo.currentMode.name == "Partial" or "Resistance":
             desCurrentMilliamps = exo.currentJoint.getDesCurrent()
             desCurrentAmps = desCurrentMilliamps / 1000
             if exo.currentState == "started":
                 if exo.currentMode.name == "Partial":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    if "Knee" in exo.currentJoint.name:
+                        comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    if "Ankle" in exo.currentJoint.name:
+                        torque(exo.currentJoint.id, exo.currentJoint.index, desCurrentAmps*exo.currentJoint.initialDirection)
                 if exo.currentMode.name == "Resistance":
-                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    if "Knee" in exo.currentJoint.name:
+                        comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    if "Ankle" in exo.currentJoint.name:
+                        torque(exo.currentJoint.id, exo.currentJoint.index, -desCurrentAmps*exo.currentJoint.initialDirection)
+
         root.after(1, run)
     else:
-        comm_can_transmit_eid(*current_brake(exo.currentJoint.canbus, 2, controller_id=exo.currentJoint.id))
+        if "Knee" in exo.currentJoint.name:
+            comm_can_transmit_eid(*current_brake(exo.currentJoint.canbus, 2, controller_id=exo.currentJoint.id))
+        if "Ankle" in exo.currentJoint.name:
+            stopCandle(exo.currentJoint.candle)
+            velocity(exo.currentJoint.id, exo.currentJoint.index, 0)
+            stopCandle(exo.currentJoint.candle)
 
 def start_button_released(*args):
     print("Start button released")
@@ -565,5 +578,7 @@ update_button_colors()
 update_visibility()
 
 # Start the main loop
-components = [exo.leftKnee, exo.rightKnee]
+kneeMotors = [exo.leftKnee, exo.rightKnee]
+ankleMotors = [exo.leftAnkle, exo.rightAnkle]
+components = [kneeMotors, ankleMotors]
 start_can(components, tkinter_loop, root.mainloop)                                                                                                                                                                             

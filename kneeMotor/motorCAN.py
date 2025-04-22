@@ -3,7 +3,8 @@ import can
 from datetime import datetime
 import time
 import threading
-from kneeMotor.motorControl import set_origin, current
+from kneeMotor.motorControl import set_origin
+from ankleMotor.motorControl import setupCandle
 
 #Motor parameters
 BITRATE = 500000
@@ -79,13 +80,20 @@ def demo_event_loop(canBus):
         #Do something
 
 def tkinter_loop(jointMotors, canBus, tkLoop):
-    for component in jointMotors:
-        component.canbus = canBus
-        comm_can_transmit_eid(*set_origin(canBus, 0, controller_id=component.id))
+    candleObjects = setupCandle()
+    candle = candleObjects[0]
+    ids = candleObjects[1]
+    for kneeMotor in jointMotors[0]:
+        kneeMotor.canbus = canBus
+        comm_can_transmit_eid(*set_origin(canBus, 0, controller_id=kneeMotor.id))
+    for ankleMotor in jointMotors[1]:
+        ankleMotor.candle = candle
+        if ids:
+            ankleMotor.id = ids.pop(0)
         
     tkLoop()
 
-def start_can(jointMotors, eventLoop, event):
+def start_can(components, eventLoop, event):
     try:
         # Set up the CAN interface with the specified bitrate, This must match the Baud Rate parameter set in R-link
         write_log("Setting bitrate for can0...")
@@ -100,11 +108,11 @@ def start_can(jointMotors, eventLoop, event):
         print("CAN bus initialized successfully.")
 
         # Create thread for receiving messages
-        receiver_thread = threading.Thread(target=can_handler_thread, args=(can0, jointMotors), daemon=True)
+        receiver_thread = threading.Thread(target=can_handler_thread, args=(can0, components[0]), daemon=True)
         # Start the receiver thread
         receiver_thread.start()
         # CALL MAIN EVENT LOOP BELOW, MUST BE A FUNCTION WITH A CONSTANT LOOP & EXPECTING A PARAMETER 'canbus'
-        eventLoop(jointMotors, can0, event)
+        eventLoop(components, can0, event)
 
     except Exception as e:
         print(f"An error occurred: {e}")
