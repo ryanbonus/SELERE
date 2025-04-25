@@ -2,7 +2,7 @@ import tkinter as tk
 from classes import Exoskeleton
 from kneeMotor.motorCAN import start_can, tkinter_loop, comm_can_transmit_eid, write_log
 from kneeMotor.motorControl import current, speed, current_brake
-from ankleMotor.motorControl import velocity, torque, stopCandle
+from ankleMotor.motorControl import velocity, torque, setVelocity, setTorque
 from PIL import Image, ImageTk
 
 # Initialize main window
@@ -65,7 +65,12 @@ def set_mode(mode):
         update_button_colors()
         if mode in exo.modes:
             print(f"Mode set to: {mode.name}")
-            exo.currentMode = exo.modes[mode.number-1] 
+            exo.currentMode = exo.modes[mode.number-1]
+            if "Ankle" in exo.currentJoint.name:
+                if mode.name == "Full":
+                    setVelocity(exo.currentJoint.id)
+                else:
+                    setTorque(exo.currentJoint.id) 
         else:
             print(f"Mode {mode.name} does not exist")
         
@@ -94,48 +99,64 @@ def control_joint(joint):
 
 def start_button_pressed(*args):
     print("Start button clicked")
+
     exo.currentState = exo.states[1]
+    
     if exo.currentState == "started":
         run()
 
 def run():
     if exo.currentState == "started":
         if exo.currentMode.name == "Full":
-            position = exo.currentJoint.getPosition()
+            if exo.currentJoint.name == "Right Knee":
+                position = -exo.currentJoint.getPosition()
+            else:
+                position = exo.currentJoint.getPosition()
             print(position,'/',exo.currentJoint.desHeight,',',exo.currentJoint.currentDirection)
             desSpd = exo.currentJoint.getDesSpeed()
-            if abs(position) > abs(exo.currentJoint.desHeight):
+            if position > exo.currentJoint.desHeight:
                 exo.currentJoint.currentDirection = -1 * exo.currentJoint.initialDirection
-            if abs(position) < abs(exo.currentJoint.minHeight):
+            if position < exo.currentJoint.minHeight:
                 exo.currentJoint.currentDirection = exo.currentJoint.initialDirection
             if "Knee" in exo.currentJoint.name:
+                velocity(100, 0, 0) #Ankle Stays Stays Stiff During Partial
                 comm_can_transmit_eid(*speed(exo.currentJoint.canbus, desSpd*exo.currentJoint.currentDirection, controller_id=exo.currentJoint.id))
             if "Ankle" in exo.currentJoint.name:
                 velocity(exo.currentJoint.id, exo.currentJoint.index, desSpd*exo.currentJoint.currentDirection)
+                comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.index)) #Knee will not move while ankle is active
 
-        if exo.currentMode.name == "Partial" or "Resistance":
+        if exo.currentMode.name == "Partial" or exo.currentMode.name == "Resistance":
             desCurrentMilliamps = exo.currentJoint.getDesCurrent()
             desCurrentAmps = desCurrentMilliamps / 1000
-            if exo.currentState == "started":
-                if exo.currentMode.name == "Partial":
-                    if "Knee" in exo.currentJoint.name:
-                        comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
-                    if "Ankle" in exo.currentJoint.name:
-                        torque(exo.currentJoint.id, exo.currentJoint.index, desCurrentAmps*exo.currentJoint.initialDirection)
-                if exo.currentMode.name == "Resistance":
-                    if "Knee" in exo.currentJoint.name:
-                        comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
-                    if "Ankle" in exo.currentJoint.name:
-                        torque(exo.currentJoint.id, exo.currentJoint.index, -desCurrentAmps*exo.currentJoint.initialDirection)
-
-        root.after(1, run)
+            if exo.currentMode.name == "Partial":
+                if "Knee" in exo.currentJoint.name:
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                    velocity(100, 0, 0) #Ankle Stays Stays Stiff During Partial
+                if "Ankle" in exo.currentJoint.name:
+                    torque(exo.currentJoint.id, exo.currentJoint.index, desCurrentMilliamps*exo.currentJoint.initialDirection)
+            if exo.currentMode.name == "Resistance":
+                if "Knee" in exo.currentJoint.name:
+                    comm_can_transmit_eid(*current(exo.currentJoint.canbus, -desCurrentAmps*exo.currentJoint.initialDirection, controller_id=exo.currentJoint.id))
+                if "Ankle" in exo.currentJoint.name:
+                    torque(exo.currentJoint.id, exo.currentJoint.index, -desCurrentAmps*exo.currentJoint.initialDirection)
+            root.after(100, run)                
+        
     else:
         if "Knee" in exo.currentJoint.name:
-            comm_can_transmit_eid(*current_brake(exo.currentJoint.canbus, 2, controller_id=exo.currentJoint.id))
+            if exo.currentMode.name == "Partial" or exo.currentMode.name == "Resistance":
+                comm_can_transmit_eid(*current_brake(exo.currentJoint.canbus, 6, controller_id=exo.currentJoint.id))
+                velocity(100, 0, 0) #Ankle Stays Stiff During Descent
+            if exo.currentMode.name == "Full":
+                comm_can_transmit_eid(*speed(exo.currentJoint.canbus, 0, controller_id=exo.currentJoint.id))
         if "Ankle" in exo.currentJoint.name:
-            stopCandle(exo.currentJoint.candle)
-            velocity(exo.currentJoint.id, exo.currentJoint.index, 0)
-            stopCandle(exo.currentJoint.candle)
+            if exo.currentMode.name == "Partial" or exo.currentMode.name == "Resistance":
+                torque(exo.currentJoint.id, exo.currentJoint.index, 0)
+            if exo.currentMode.name == "Full":
+                velocity(exo.currentJoint.id, exo.currentJoint.index, 0)
+                
+            comm_can_transmit_eid(*speed(exo.leftKnee.canbus, 0, controller_id=exo.currentJoint.index)) #Knee will not move while ankle is active
+    if exo.currentMode.name == "Full":
+        root.after(100, run)
 
 def start_button_released(*args):
     print("Start button released")
@@ -144,6 +165,9 @@ def start_button_released(*args):
     write_log(f"LeftKnee Position:{exo.leftKnee.getPosition()}")
     write_log(f"RightKnee Position:{exo.rightKnee.getPosition()}")
     exo.currentState = exo.states[0]
+
+    if exo.currentState == "stopped":
+        run()
 
 # Create frames for different sections
 slider_frame = tk.Frame(root)

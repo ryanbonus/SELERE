@@ -94,11 +94,11 @@ class AnkleMotor:
         self.desHeight = 0
         self.maxSpd = 1
         self.minSpd = 0
-        self.maxAssist = 0.5
+        self.maxCurrent = 2
+        self.maxAssist = self.maxCurrent
         self.minAssist = 0
-        self.maxResist = 0.5
+        self.maxResist = self.maxCurrent
         self.minResist = 0
-        self.maxCurrent = 0.5
         self.desCurrent = 0
         self.id = 0
         self.candle = 0
@@ -142,9 +142,7 @@ class AnkleMotor:
     def resist(self, torque):
         self.torque = torque
         print("Resisting Ankle with Torque:", torque)
-
-    def getPosition(self):
-        return self.position     
+   
         
 
 # Exoskeleton Class containing modes and motors
@@ -156,10 +154,10 @@ class Exoskeleton:
         self.modePR = Mode("Resistance", 3)
         self.modes = (self.modeFA, self.modePA, self.modePR)
         self.currentMode = self.modes[0]
-        self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 1)
-        self.leftAnkle = AnkleMotor(0, "Left Ankle", -1, 3/4, 1)
-        self.rightKnee = KneeMotor(1, "Right Knee", 1, -1000, -1)
-        self.rightAnkle = AnkleMotor(1, "Right Ankle", 1, 3/4, -1)
+        self.leftKnee = KneeMotor(0, "Left Knee", -1, 1000, 1) #id, name, initial direction, max height, min height
+        self.leftAnkle = AnkleMotor(0, "Left Ankle", 1, 3/4, 0.01)
+        self.rightKnee = KneeMotor(1, "Right Knee", 1, 1000, 1)
+        self.rightAnkle = AnkleMotor(1, "Right Ankle", -1, 3/4, 0.01)
         self.joints = (self.leftKnee, self.rightKnee, self.leftAnkle, self.rightAnkle)
         self.currentJoint = self.joints[0]
         self.states = ("stoppped", "started")
